@@ -6,6 +6,7 @@ const ERRORS = {
     set: {
         invalid: Symbol(),
         undocumented: Symbol(),
-        typeError: Symbol()
+        sameObject: Symbol(),
+        inputTypeError: Symbol()
     }
 };

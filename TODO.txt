@@ -1,0 +1,25 @@
+
+----
+Safeguard when trying to overwrite
+    * A Listenable (sub-store)
+    * A reserved property / method on of Listenable.
+
+----
+
+Store.reset('propertyName'); // Reverts to initial-state
+keep initialState on Listenable
+
+----
+
+
+Consider: (may be a bad idea?)
+Store.addListener(fn, 'subStore');
+
+if the property you want to listen to is also a Listenable, add the listener to the Listenable
+
+----
+
+Low priority
+README.md: Add documentation example with initialState but not validator
+
+----

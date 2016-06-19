@@ -116,6 +116,12 @@ export default class ListenableBase {
         const lastValue = this[propName];
 
         if (lastValue === nextValue) {
+            if (typeof nextValue === 'object' && nextValue !== null) {
+                this._handleError(
+                    new Error(`Tried to set an object which was already present. propName: "${propName}", value: ${JSON.stringify(object)}`),
+                    ERRORS.set.sameObject
+                );
+            }
             return;
         }
 
@@ -128,7 +134,7 @@ export default class ListenableBase {
         if (typeof props !== 'object') {
             this._handleError(
                 new Error(`TypeError: Listenable.set can only take object: {propName: value [, propName2: value2]}. Got type ${typeof props}`),
-                ERRORS.set.typeError
+                ERRORS.set.inputTypeError
             )
         }
 

@@ -1,7 +1,6 @@
 import Listenable from 'listenable/Listenable';
-import ListenableTailoredToReact from 'listenable/ListenableTailoredToReact';
-import Listeners from 'listeners/Listeners';
+import * as Reactito from './reactito';
 
-const Pockito = {Listenable, ListenableTailoredToReact, Listeners};
+const Pockito = {Listenable, Reactito};
 
 export default Pockito;

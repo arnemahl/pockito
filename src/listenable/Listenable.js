@@ -9,12 +9,14 @@ export default class Listenable extends BaseListenable {
         validator: {
             onValidationError: (value) => ['log', 'throw'].indexOf(value),
             onUndocumentedError: (value) => ['none', 'log', 'throw'].indexOf(value),
-            onListenerError: (value) => ['log', 'throw'].indexOf(value)
+            onListenerError: (value) => ['log', 'throw'].indexOf(value),
+            onSameObjectError: (value) => ['none', 'log', 'throw'].indexOf(value)
         },
         initialState: {
             onValidationError: 'log',
             onUndocumentedError: 'none',
-            onListenerError: 'trow'
+            onListenerError: 'trow',
+            onSameObjectError: 'log'
         }
     });
 
@@ -57,13 +59,15 @@ export default class Listenable extends BaseListenable {
             case ERRORS.set.invalid:
                 _handleErrorAccordingToConfig(error, this.config.onValidationError);
                 break;
+            case ERRORS.set.sameObject:
+                _handleErrorAccordingToConfig(error, this.config.onSameObjectError);
 
-            case ERRORS.listener.remove:
             case ERRORS.listener.add:
+            case ERRORS.listener.remove:
                 _handleErrorAccordingToConfig(error, this.config.onListenerError);
                 break;
 
-            case ERRORS.set.typeError:
+            case ERRORS.set.inputTypeError:
                 throw error;
                 break;
         }
