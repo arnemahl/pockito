@@ -1,11 +1,8 @@
-Verifiers
-----
 Safeguard when trying to overwrite
     * A Listenable (sub-store)
     * A reserved property / method on of Listenable.
 
 ----
-
 
 Consider: (may be a bad idea?)
 Store.addListener(fn, 'subStore');

@@ -4,13 +4,13 @@ Pockito aims to be a lighweight framework for managing app-state.
 
 With Pockito it is easy to listen to, create, validate and document app-state.
 
-It comes with a custom [tailoring to React](#tailored-to-react), but you can easily [create your own customizations](create-your-own-customizations) to suit your needs.
+It comes with a custom [tailoring to React](#tailored-to-react), but you can easily [create your own customizations](#create-your-own-customizations) to suit your needs.
 
 
 
 ## Features
 
-To help you get started as easily as possible, Pockito has a very simple minimum [setup of your Store](creating-your-store).
+To help you get started as easily as possible, Pockito has a very simple minimum [setup of your Store](#creating-your-store).
 
 
 <!-- Store -->
@@ -49,7 +49,7 @@ Store.addListener((value) => {/*...*/}, 'showLoadingScreen');
 
 Looking at the source code of at Store and seeing what properties/values you can expect it to contain is very useful.
 
-To to document the contents, you can add a `validator` and an `initialState` when creating the store. (Note: You can add an initialState without a validator, but not a validator without an initialState. We suggest you add both.)
+To to document the contents, you can add a `validator` and an `initialState` when creating the store. (Note: You can add an initialState without a validator, but not a validator without an initialState. We suggest you add both.) See [Default validators](#default-validators) for a list of basic validators that come with Pockito.
 
 ```
 import {Listenable, Validators} from 'pockito';
@@ -66,7 +66,7 @@ Store = new Listenable({
 
 Adding a validator documents _that_ a property may exist, and _what_ value it may contain.
 
-If the Store receives an invalid value for a property, it will simply not be set. Instead, it will result in an exception or a log statement, depending on the Store's [configuration](store-configuration).
+If the Store receives an invalid value for a property, it will simply not be set. Instead, it will result in an exception or a log statement, depending on the Store's [configuration](#store-configuration).
 
 Having added a validator, you can use `Store.isValid('propName', value)` as a verifier for a potential property-value.
 
@@ -109,11 +109,30 @@ As mentioned above, an *undocumentedError* happens when the store receives an un
 
 A *validationError* happens when the store receives an invalid property.
 
-A *sameObjectError* happens when the store receives an object or array which was already present. This does not produce a change or notify listeners, although it is possible the object was manipulated. Check out [this](note-objects-in-the-store) to avoid this mistake.
+A *sameObjectError* happens when the store receives an object or array which was already present. This does not produce a change or notify listeners, although it is possible the object was manipulated. Check out [this](#note-objects-in-the-store) to avoid this mistake.
 
 A *listenerError* happens when Pockito fails to add or remove a listener. If this happens there is an error in your code, which may prevent your compoents from syncing with the Store state, or cause the Store to notify non-existant listeners.
 
 
+
+#### Default validators
+
+Pockito comes with a set of basic validators that you can [use](#declare-and-validate-store-content). These are:
+
+* boolean
+* string
+* number
+* symbol
+* func
+* object
+* array
+* nonEmptyString
+* nonNullObject
+* integer
+* parasbleInteger
+* parasbleFloat
+
+Check out the [source code](src/validators/Validators.js) to see how they work.
 
 
 
@@ -178,7 +197,7 @@ Note that the config of the base store applies to it's sub-stores as well, so yo
 
 ### Listeners
 
-Pockito makes is easy to create listeners and and listen to relevant parts of the app-state. All listeners are [retroactive](retroactive-listeners) and only get fired upon [effectual changes](only-fired-upon-actual-changes).
+Pockito makes is easy to create listeners and and listen to relevant parts of the app-state. All listeners are [retroactive](#retroactive-listeners) and only get fired upon [effectual changes](#only-fired-upon-actual-changes).
 
 #### How a listener is notified
 By default, a when a listener is notified it receives three parameters, 'value', 'lastValue' and 'propName'.
@@ -187,7 +206,7 @@ By default, a when a listener is notified it receives three parameters, 'value',
 listener = (value, lastValue, propName) => { ... }
 ```
 
-However, you can also use listener middelware which modifies how the change is presented to the listener. One such example is [ReactStateInjector](tailored-to-react) which makes it super easy to syncronize a React Component's state with the Store.
+However, you can also use listener middelware which modifies how the change is presented to the listener. One such example is [ReactStateInjector](#tailored-to-react) which makes it super easy to syncronize a React Component's state with the Store.
 
 #### Adding listeners to the Store
 
@@ -284,7 +303,7 @@ componentWillMount() {
 }
 ```
 
-The easiest way to make this method available on your Store is to make it a [Reactito.Listenable](reactito-listenable).
+The easiest way to make this method available on your Store is to make it a [Reactito.Listenable](#reactito-listenable).
 
 ###### Reactito.Listenable
 
@@ -302,4 +321,4 @@ Store = new Reactito.Listenable();
 
 ## Create your own Customizations
 
-See how the Pockito was tailored to React to get inspiration, source code in [src/reactito](src/reactito). Note that it's also possible to use your own customizations alongside Reactito.
+See how the Pockito was tailored to React to get inspiration, source code in [src/reactito](#src/reactito). Note that it's also possible to use your own customizations alongside Reactito.
