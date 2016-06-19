@@ -4,7 +4,7 @@ Pockito aims to be a lighweight framework for managing app-state.
 
 With Pockito it is easy to listen to, create, validate and document app-state.
 
-It comes with a custom [tailoring to React](#tailored-to-react), but you can easily add [your own customizations](tailor-to-your-needs) to suit your needs.
+It comes with a custom [tailoring to React](#tailored-to-react), but you can easily [create your own customizations](create-your-own-customizations) to suit your needs.
 
 
 
@@ -13,7 +13,7 @@ It comes with a custom [tailoring to React](#tailored-to-react), but you can eas
 To help you get started as easily as possible, Pockito has a very simple minimum [setup of your Store](creating-your-store).
 
 
-
+<!-- Store -->
 
 ### Creating your Store
 
@@ -45,7 +45,6 @@ Store.addListener((value) => {/*...*/}, 'showLoadingScreen');
 ```
 
 
-<!-- Validator and Initial State -->
 #### Declare and validate Store content
 
 Looking at the source code of at Store and seeing what properties/values you can expect it to contain is very useful.
@@ -101,11 +100,14 @@ Below is a table of error types you can configure. Note taht default values are 
 | ---------------------- | :----: | :---: | :-----: |
 | onUndocumentedError    | ☑      | ☐     | ☐       |
 | onValidationError      | N/A    | ☑     | ☐       |
+| onSameObjectError      | ☐      | ☑     | ☐       |
 | onListenerError        | N/A    | ☑     | ☐       |
 
 As mentioned above, an *undocumentedError* happens when the store receives an undocumented property, i.e. a property for which there is no validator.
 
 A *validationError* happens when the store receives an invalid property.
+
+A *sameObjectError* happens when the store receives an object or array which was already present. This does not produce a change or notify listeners, although it is possible the object was manipulated. Check out [this](note-objects-in-the-store) to avoid this mistake.
 
 A *listenerError* happens when Pockito fails to add or remove a listener. If this happens there is an error in your code, which may prevent your compoents from syncing with the Store state, or cause the Store to notify non-existant listeners.
 
@@ -137,10 +139,12 @@ Store = new Listenable({
 
 Like in Redux, we recommend having only one Store. As your app-state grows, you can add sub-stores to your Store, to logically organize your app-state.
 
+Creating a sub-store is essentially just creating a new Pockito.Listenable and adding it as a property to the main Store. In the example below Listenables are created through the alternative syntax `Listenable.with(...)`, which works just like `new Listenable(...)`. 
+
 ```
 import {Listenable, Validators} from 'pockito';
 
-Store = new Listenable({
+Store = Listenable.with({
     SubStoreA: Listenable.with({
         validator: {
             showLoadingScreen: Validators.boolean
@@ -164,33 +168,38 @@ Store = new Listenable({
 });
 ```
 
-Note that the config of Store applies to SubStoreA and SubStoreB as well.
+Note that the config of the base store applies to it's sub-stores as well, so you only need to configure your store once.
 
 
 
+<!-- Listeners -->
 
 ### Listeners
 
-One of the strenghts of Pockito is that it's easy to create listeners, and listen to relevant parts of the app-state.
+Pockito makes is easy to create listeners and and listen to relevant parts of the app-state. All listeners are [retroactive](retroactive-listeners) and only get fired upon [effectual changes](only-fired-upon-actual-changes).
 
-#### Easy-to-write listeners
+#### How a listener is notified
+By default, a when a listener is notified it receives three parameters, 'nextValue', 'lastValue' and 'propName'.
 
-A basic listener looks like this `listener = (nextValue, lastValue, propName) => { ... }`.
+```
+listener = (nextValue, lastValue, propName) => { ... }
+```
 
-#### Simple Listeners
+However, you can also use listener middelware which modifies how the change is presented to the listener. One such example is [ReactStateInjector](tailored-to-react) which makes it super easy to syncronize a React Component's state with the Store.
 
-Adding listeners is easy.
+#### Adding listeners to the Store
 
-`Store.addListener(listener)` adds a listener to `Store` which is notified of changes to any value on `Store`.
+When you add listeners you can choose exactly what kinds of changes the listener is interested in.
 
-You can also choose which props to listen to:
+* `Store.addListener(listener)` ― adds a listener to `Store` which is notified of changes to _any_ value on `Store`.
+* `Store.addListener(listener, 'propName')` ― for listening to a single property named 'propName'.
+* `Store.addListener(listener, ['propName', 'anotherPropName'])` ― for listening to multiple props.
 
-* `Store.addListener(listener, 'propName')` for listening to a single prop, or 
-* `Store.addListener(listener, ['propName', 'anotherPropName'])` for listening to multiple props.
+Being able to specify which properties a listener is notified of has some benefits.
 
-Think of the optional second parameter as a filter. This makes it easy to predict which values the 
-listeners may receive, and you don't have to worry about the listener being fired for values it's 
-not interested in.
+Firstly, listeners will only be fired due to relevant changes. Hence there is no need to check whether or not a change is of relevance to the listener (less code, yay!), and listeners will never be fired only to do nothing because the change is irrelevant.
+
+Secondly it allows you to write custom listeners for each property. There is often times a different respnonse to the update depending on which property was updated, and it typically produces more readable code if each listener only handles one case (rather than catch-all listeners with long switch statements).
 
 #### Retroactive listeners
 
@@ -198,34 +207,74 @@ Once you listen to a resource, e.g. `Store.addListener(listener, 'showLoadingScr
 notified right away if the property `showLoadingScreen` is already present in `Store`. You'll never have to 
 write that extra line of code to ensure you get the value if it's already been set.
 
-#### Only be notified upon change
+#### Only fired upon effectual changes
 
-Pockito does not notify you if a property get's updated with the same value as it previously had.
+Pockito does not notify listeners unless the new value is different from the old one. This allows you to pipe all changes directly into the view without worrying about wasting resources on non-effectual updates.
+
+###### Note: Objects in the store
+Because the Listenable only acceptes effectual changes you cannot modify objects that already exists in the Store. You need to either create a new object with both new and unchanged properties, or perhaps rather create a sub-store for that object.
+
+Creating a new object:
+
+```
+Store = new Listenable({
+    initialState: {
+        participants: {}
+    }
+});
+
+Store.set({
+    participants: {
+        ...Store.participants,
+        [participantId]: participantName
+    }
+});
+
+Store.addListener(fn, 'participants');
+```
+
+Using a sub-store
+
+```
+Store = new Listenable({
+    participants: new Listenable() // Participans are a substore complete with addListener(...) and set(...)
+});
+
+Store.participants.set({
+    [participantId]: participantName
+});
+
+Store.participants.addListener(fn);
+```
 
 
-
+<!-- Reactito -->
 
 ## Tailored to React
-If you are using Pockito with React, you can create listeners like this:
+To tailor Pockito to React, we have created three things, (1) a listener middleware, (2) a listener method `listenWhileMounted` for React.Component instances, and (3) a customized Listenable on which the `listenWhileMouted` method is available.
+
+###### Reactito.StateInjector
+
+If you are using Pockito with React, you can create a customized listener using the method `Pockito.Reactito.StateInjector(reactComponentInstance)`.
 
 ```
 componentWillMount() {
-    this.unListen = Store.addListener(ReactStateInjector(this), 'showLoadingScreen');
+    this.unListen = Store.addListener(StateInjector(this), 'showLoadingScreen');
 }
 componentWillUnMount() {
     this.unListen();
 }
 ```
 
-The ReactStateInjector is a oneLiner
+The StateInjector is a oneLiner, which put's the changes directly into the component's state for you.
 
 ```
-ReactStateInjector = (component) => (lastValue, nextValue, propName) => component.setState({ [propName]: nextValue })
+StateInjector = (component) => (lastValue, nextValue, propName) => component.setState({ [propName]: nextValue })
 ```
 
-which put's the changes directly into the component's state for you.
+###### Reactito.listenWhileMounted
 
-If that's not simple enough for you, you can use
+However, to make it even simpler, you can use `listenWhileMounted(reactComponent)`. It adds a StateInjector to the component and automatically unlistens when the component unmounts.
 
 ```
 componentWillMount() {
@@ -233,17 +282,22 @@ componentWillMount() {
 }
 ```
 
-which also automatically unlistens when the component unmounts.
+The easiest way to make this method available on your Store is to make it a [Reactito.Listenable](reactito-listenable).
 
-For the last one to work you need to use `ListenableTailoredToReact`, which has the method `listenWhileMounted`.
+###### Reactito.Listenable
+
+The method `listenWhileMounted` exists on `Pockito.Reactito.Listenable`, which is a customization of the regular `Pockito.Listenable`.
 
 ```
-import {ListenableTailoredToReact} from 'pockito';
+import {Reactito} from 'pockito';
 
-Store = new ListenableTailoredToReact();
+Store = new Reactito.Listenable();
 ```
 
 
 
-## Tailor to your needs
-See the source code of `Listeners` and `ListenableTailoredToReact` and to see examples of how it can be done.
+<!-- Customize -->
+
+## Create your own Customizations
+
+See how the Pockito was tailored to React to get inspiration, source code in [src/reactito](src/reactito). Note that it's also possible to use your own customizations alongside Reactito.
