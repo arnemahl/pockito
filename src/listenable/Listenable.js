@@ -68,6 +68,8 @@ export default class Listenable extends BaseListenable {
                 break;
 
             case ERRORS.set.inputTypeError:
+            case ERRORS.reset.noInitalState:
+            case ERRORS.reset.noInitialStateForProp:
                 throw error;
                 break;
         }

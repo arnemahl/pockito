@@ -8,5 +8,9 @@ const ERRORS = {
         undocumented: Symbol(),
         sameObject: Symbol(),
         inputTypeError: Symbol()
+    },
+    reset: {
+        noInitalState: Symbol(),
+        noInitialStateForProp: Symbol()
     }
 };

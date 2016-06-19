@@ -49,7 +49,7 @@ Store.addListener((value) => {/*...*/}, 'showLoadingScreen');
 
 Looking at the source code of at Store and seeing what properties/values you can expect it to contain is very useful.
 
-To to document the contents, you can add a `validator` and an `initialState` when creating the store.
+To to document the contents, you can add a `validator` and an `initialState` when creating the store. (Note: You can add an initialState without a validator, but not a validator without an initialState. We suggest you add both.)
 
 ```
 import {Listenable, Validators} from 'pockito';
@@ -69,6 +69,8 @@ Adding a validator documents _that_ a property may exist, and _what_ value it ma
 If the Store receives an invalid value for a property, it will simply not be set. Instead, it will result in an exception or a log statement, depending on the Store's [configuration](store-configuration).
 
 Having added a validator, you can use `Store.isValid('propName', value)` as a verifier for a potential property-value.
+
+Having added an initialState you can use `Store.reset('propName')` to revert a single property to it's initial state, or `Store.reset()` to reset all properties.
 
 <!-- Config -->
 #### Store configuration

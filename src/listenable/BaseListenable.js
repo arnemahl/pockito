@@ -13,8 +13,9 @@ export default class ListenableBase {
         });
 
         this.validator = validator;
+        this.initialState = initialState;
 
-        if (typeof initialState === 'object') {
+        if (initialState) {
             this.set(initialState);
         }
     }
@@ -141,6 +142,26 @@ export default class ListenableBase {
         Object.keys(props).forEach(propName => {
             this._set(propName, props[propName]);
         });
+    }
+
+    _reset(propName) {
+        if (!this.initialState[propName]) {
+            this._handleError(new Error(`Cannot reset property, "${propName}" has no initialState.`, ERRORS.reset.noInitialStateForProp)
+        }
+    }
+
+    reset(propNames) {
+        if (!this.initialState) {
+            this._handleError(new Error(`Cannot reset properties, initialState was not provided.`, ERRORS.reset.noInitalState)
+        }
+
+        if (Array.isArray(propNames)) {
+            propNames.forEach(this._reset);
+        } else if (typeof propNames === 'string') {
+            this._reset(propNames);
+        } else {
+            this.set(initialState);
+        }
     }
 
 }
