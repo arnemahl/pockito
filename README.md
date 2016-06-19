@@ -179,10 +179,10 @@ Note that the config of the base store applies to it's sub-stores as well, so yo
 Pockito makes is easy to create listeners and and listen to relevant parts of the app-state. All listeners are [retroactive](retroactive-listeners) and only get fired upon [effectual changes](only-fired-upon-actual-changes).
 
 #### How a listener is notified
-By default, a when a listener is notified it receives three parameters, 'nextValue', 'lastValue' and 'propName'.
+By default, a when a listener is notified it receives three parameters, 'value', 'lastValue' and 'propName'.
 
 ```
-listener = (nextValue, lastValue, propName) => { ... }
+listener = (value, lastValue, propName) => { ... }
 ```
 
 However, you can also use listener middelware which modifies how the change is presented to the listener. One such example is [ReactStateInjector](tailored-to-react) which makes it super easy to syncronize a React Component's state with the Store.
@@ -269,7 +269,7 @@ componentWillUnMount() {
 The StateInjector is a oneLiner, which put's the changes directly into the component's state for you.
 
 ```
-StateInjector = (component) => (lastValue, nextValue, propName) => component.setState({ [propName]: nextValue })
+StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value })
 ```
 
 ###### Reactito.listenWhileMounted

@@ -44,8 +44,8 @@ export default class ListenableBase {
 
         if (typeof this[propName] !== 'undefined') {
             const lastValue = void 0;
-            const nextValue = this[propName];
-            newListener(lastValue, nextValue, propName);
+            const value = this[propName];
+            newListener(value, lastValue, propName);
         }
 
         return this._removeListener.bind(this, newListener, propName);
@@ -110,13 +110,13 @@ export default class ListenableBase {
         }
     }
 
-    _set(propName, nextValue) {
-        this._ensureValid(propName, nextValue);
+    _set(propName, value) {
+        this._ensureValid(propName, value);
 
         const lastValue = this[propName];
 
-        if (lastValue === nextValue) {
-            if (typeof nextValue === 'object' && nextValue !== null) {
+        if (lastValue === value) {
+            if (typeof value === 'object' && value !== null) {
                 this._handleError(
                     new Error(`Tried to set an object which was already present. propName: "${propName}", value: ${JSON.stringify(object)}`),
                     ERRORS.set.sameObject
@@ -125,9 +125,9 @@ export default class ListenableBase {
             return;
         }
 
-        this[propName] = nextValue;
+        this[propName] = value;
 
-        this.listeners[propName] && this.listeners[propName].forEach(listener => listener(lastValue, nextValue, propName));
+        this.listeners[propName] && this.listeners[propName].forEach(listener => listener(value, lastValue, propName));
     }
 
     set(props) {
@@ -142,4 +142,5 @@ export default class ListenableBase {
             this._set(propName, props[propName]);
         });
     }
+
 }

@@ -1,6 +1,6 @@
 import Pockito from './Listenable';
 
-export const StateInjector = (component) => (lastValue, nextValue, propName) => component.setState({ [propName]: nextValue });
+export const StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value });
 
 export function listenWhileMounted(props, component) {
     const cwun_original = component.componentWillUnmount;
