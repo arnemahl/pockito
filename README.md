@@ -4,7 +4,7 @@ Pockito aims to be a lighweight framework for managing app-state.
 
 With Pockito it is easy to listen to, create, validate and document app-state.
 
-It comes with a custom tailoring to React, but you can easily add your own modifications to suit other needs.
+It comes with a custom [tailoring to React](#tailored-to-react), but you can easily add [your own customizations](tailor-to-your-needs) to suit your needs.
 
 
 
@@ -192,5 +192,5 @@ Store = new ListenableTailoredToReact();
 
 
 
-## Tailor to your own needs
+## Tailor to your needs
 See the source code of `Listeners` and `ListenableTailoredToReact` and to see examples of how it can be done.
