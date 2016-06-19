@@ -216,6 +216,25 @@ Firstly, listeners will only be fired due to relevant changes. Hence there is no
 
 Secondly it allows you to write custom listeners for each property. There is often times a different respnonse to the update depending on which property was updated, and it typically produces more readable code if each listener only handles one case (rather than catch-all listeners with long switch statements).
 
+#### Removing listeners
+
+There are two ways to remove listeners. One way is to use `removeListener` with the same parameters as you used when adding the listener. Note that you must have the reference to the same _listener_, hence this does not work for inline functions.
+
+```
+Store.addListener(listener, 'propName');
+...
+Store.removeListener(listener, 'propName');
+```
+
+Alternatively you can use the method returned from `addListener` to remove the listener. This also works with inline functions.
+
+```
+const removeListener = Store.addListener(listener, 'propName');
+...
+removeListener();
+```
+
+
 #### Retroactive listeners
 
 Once you listen to a resource, e.g. `Store.addListener(listener, 'showLoadingScreen')`, the listener will be 
