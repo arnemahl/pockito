@@ -10,7 +10,164 @@ It comes with a custom [tailoring to React](#tailored-to-react), but you can eas
 
 ## Features
 
-Learn how to create listeners and creating a Store for your app-state.
+To help you get started as easily as possible, Pockito has a very simple minimum [setup of your Store](creating-your-store).
+
+
+
+
+### Creating your Store
+
+To make it as easy as possible to get started, the minimum setup is designed to be just that: a bare minimum.
+
+
+#### Minimum Store setup
+
+When creating a Store, all you need to do is do create a new `Pockito.Listenable`.
+
+```
+import {Listenable} from 'pockito';
+
+const Store = new Listenable();
+```
+
+Then you are ready to set values to your Store's properties. The `set` function of `Pockito.Listenable`, and hence your store, takes as input an object with properties/values, just like the `setState` function of `React.Component`'s. Here's an example where we set `showLoadingScreen` to `true`.
+
+```
+Store.set({
+    showLoadingScreen: true
+});
+```
+
+Then you can read the properties directly off the store: `Store.showLoadingScreen`, or you can [add a listener](#listeners) to always stay in sync with the store.
+
+```
+Store.addListener((value) => {/*...*/}, 'showLoadingScreen');
+```
+
+
+<!-- Validator and Initial State -->
+#### Declare and validate Store content
+
+Looking at the source code of at Store and seeing what properties/values you can expect it to contain is very useful.
+
+To to document the contents, you can add a `validator` and an `initialState` when creating the store.
+
+```
+import {Listenable, Validators} from 'pockito';
+
+Store = new Listenable({
+    validator: {
+        showLoadingScreen: Validators.boolean
+    },
+    initialState: {
+        showLoadingScreen: true
+    }
+});
+```
+
+Adding a validator documents _that_ a property may exist, and _what_ value it may contain.
+
+If the Store receives an invalid value for a property, it will simply not be set. Instead, it will result in an exception or a log statement, depending on the Store's [configuration](store-configuration).
+
+Having added a validator, you can use `Store.isValid('propName', value)` as a verifier for a potential property-value.
+
+<!-- Config -->
+#### Store configuration
+
+Adding a `config` property allows you to dictate how errors are presented.
+
+```
+import {Listenable, Validators} from 'pockito';
+
+Store = new Listenable({
+    validator: {
+        showLoadingScreen: Validators.boolean
+    },
+    initialState: {
+        showLoadingScreen: true
+    },
+    config: {
+        onUndocumentedError: 'log' // default is 'none'
+    }
+});
+```
+
+After setting `onUndocumentedError: 'log'`, Pockito will log to browser console whenever your Store receives a property which doesn't have a validator.
+This allows you to put off documenting the Store if you just feel like hacking away until you have a good setup. Once it's time to add documentation, Pockito will remind you of which properties the store contains, so you don't have to worry about forgetting them.
+
+Below is a table of error types you can configure. Note taht default values are denoted by "☑" and possible values are denoted by "☐".
+
+| config propety \ value | 'none' | 'log' | 'throw' |
+| ---------------------- | :----: | :---: | :-----: |
+| onUndocumentedError    | ☑      | ☐     | ☐       |
+| onValidationError      | N/A    | ☑     | ☐       |
+| onListenerError        | N/A    | ☑     | ☐       |
+
+As mentioned above, an *undocumentedError* happens when the store receives an undocumented property, i.e. a property for which there is no validator.
+
+A *validationError* happens when the store receives an invalid property.
+
+A *listenerError* happens when Pockito fails to add or remove a listener. If this happens there is an error in your code, which may prevent your compoents from syncing with the Store state, or cause the Store to notify non-existant listeners.
+
+
+
+
+
+#### Create your own validators
+Validators are just functions: `(value, propName, listenable) => /* true or false*/;`.
+
+This allows you to do things such as:
+
+```
+Store = new Listenable({
+    validator: {
+        fruit: (value) => ['apple', 'pear', 'banana'].indexOf(value)
+    },
+    initialState: {
+        fruit: 'apple'
+    }
+});
+```
+
+* NOTE TO SELF: Find a more creative example. Add validator `Pockito.Validators.oneOf(array)`
+
+
+
+#### Nested Store
+
+Like in Redux, we recommend having only one Store. As your app-state grows, you can add sub-stores to your Store, to logically organize your app-state.
+
+```
+import {Listenable, Validators} from 'pockito';
+
+Store = new Listenable({
+    SubStoreA: Listenable.with({
+        validator: {
+            showLoadingScreen: Validators.boolean
+        },
+        initialState: {
+            showLoadingScreen: true
+        }
+    }),
+    SubStoreB: Listenable.with({
+        validator: {
+            userName: Validators.string
+        },
+        initialState: {
+            userName: true
+        }
+    }),
+    config: {
+        onValidationError: 'throw' // default is 'log'
+        onUndocumentedError: 'log' // default is 'none'
+    }
+});
+```
+
+Note that the config of Store applies to SubStoreA and SubStoreB as well.
+
+
+
 
 ### Listeners
 
@@ -44,110 +201,6 @@ write that extra line of code to ensure you get the value if it's already been s
 #### Only be notified upon change
 
 Pockito does not notify you if a property get's updated with the same value as it previously had.
-
-
-
-
-### Creating your Store
-
-TODO intro
-
-#### Simple Store
-Stores in Pockito can be created as easily as
-
-```
-import {Listenable} from 'pockito';
-
-export default new Listenable();
-```
-
-#### Declare and validate Store content
-
-Looking at the source code of at Store and seeing what fields it contains is very useful.
-
-To to document the contents, you need to add a `validator` and an `initialState` when creating the store.
-
-* NOTE TO SELF: Enable documenting by initialState only.
-
-
-```
-import {Listenable, Validators} from 'pockito';
-
-Store = new Listenable({
-    validator: {
-        showLoadingScreen: Validators.boolean
-    },
-    initialState: {
-        showLoadingScreen: true
-    },
-    config: {
-        onValidationError: 'throw' // default is 'log'
-        onUndocumentedError: 'log' // default is 'none'
-    }
-});
-```
-
-Adding a validator documents _that_ a prperty may exist, and _what_ value it may contain.
-
-The *validator* ensures that only values of the correct type are written to the store.
-Invalid values will simply not be set, and result in an exception or a log statement, depending on the Store's configuration.
-
-Once you have added a validator, you can use `Store.isValid('userName', value)`, to validate a value before setting it to the store.
-
-The optional `config` property allows you to dictate how errors are presented.
-
-
-#### Create your own validators
-Validators are just functions: `(value, propName, listenable) => /* true or false*/;`.
-
-E.g. you can do:
-
-```
-Store = new Listenable({
-    validator: {
-        fruit: (value) => ['apple', 'pear', 'banana'].indexOf(value)
-    },
-    initialState: {
-        fruit: 'apple'
-    }
-});
-```
-
-* NOTE TO SELF: Find a more creative example. Add validator `Pockito.Validators.oneOf(array)`
-
-
-#### Nested Store
-
-When having a complex app-state it's useful to be able to split your store into multiple sub-stores. It can be done like:
-
-```
-import {Listenable, Validators} from 'pockito';
-
-Store = new Listenable({
-    SubStoreA: Listenable.with({
-        validator: {
-            showLoadingScreen: Validators.boolean
-        },
-        initialState: {
-            showLoadingScreen: true
-        }
-    }),
-    SubStoreB: Listenable.with({
-        validator: {
-            userName: Validators.string
-        },
-        initialState: {
-            userName: true
-        }
-    }),
-    config: {
-        onValidationError: 'throw' // default is 'log'
-        onUndocumentedError: 'log' // default is 'none'
-    }
-});
-```
-
-Note that the config of Store applies to SubStoreA and SubStoreB as well.
 
 
 
