@@ -245,7 +245,7 @@ write that extra line of code to ensure you get the value if it's already been s
 
 Pockito does not notify listeners unless the new value is different from the old one. This allows you to pipe all changes directly into the view without worrying about wasting resources on non-effectual updates.
 
-###### Note: Objects in the store
+##### Note: Objects in the store
 Because the Listenable only acceptes effectual changes you cannot modify objects that already exists in the Store. You need to either create a new object with both new and unchanged properties, or perhaps rather create a sub-store for that object.
 
 Creating a new object:
@@ -287,7 +287,7 @@ Store.participants.addListener(fn);
 ## Tailored to React
 To tailor Pockito to React, we have created three things, (1) a listener middleware, (2) a listener method `listenWhileMounted` for React.Component instances, and (3) a customized Listenable on which the `listenWhileMouted` method is available.
 
-###### Reactito.StateInjector
+##### Reactito.StateInjector
 
 If you are using Pockito with React, you can create a customized listener using the method `Pockito.Reactito.StateInjector(reactComponentInstance)`.
 
@@ -306,7 +306,7 @@ The StateInjector is a oneLiner, which put's the changes directly into the compo
 StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value })
 ```
 
-###### Reactito.listenWhileMounted
+##### Reactito.listenWhileMounted
 
 However, to make it even simpler, you can use `listenWhileMounted(reactComponent)`. It adds a StateInjector to the component and automatically unlistens when the component unmounts.
 
@@ -318,7 +318,7 @@ componentWillMount() {
 
 The easiest way to make this method available on your Store is to make it a [Reactito.Listenable](#reactito-listenable).
 
-###### Reactito.Listenable
+##### Reactito.Listenable
 
 The method `listenWhileMounted` exists on `Pockito.Reactito.Listenable`, which is a customization of the regular `Pockito.Listenable`.
 
