@@ -7,17 +7,11 @@ With Pockito it is easy to listen to, create, validate and document app-state.
 It comes with a custom [tailoring to React](#tailored-to-react), but you can easily [create your own customizations](#create-your-own-customizations) to suit your needs.
 
 
-
-## Features
-
-To help you get started as easily as possible, Pockito has a very simple minimum [setup of your Store](#creating-your-store).
-
-
 <!-- Store -->
 
 ### Creating your Store
 
-To make it as easy as possible to get started, the minimum setup is designed to be just that: a bare minimum.
+To make it as easy as possible to get started, the minimum setup is designed to be just that: a bare minimum. However, as you app matures Pockito helps you [document](#store-configuration), [validate](#declare-and-validate-store-content) and [organize](#nested-store) your store state to make it more maintainable.
 
 
 #### Minimum Store setup
@@ -321,4 +315,4 @@ Store = new Reactito.Listenable();
 
 ## Create your own Customizations
 
-See how the Pockito was tailored to React to get inspiration, source code in [src/reactito](#src/reactito). Note that it's also possible to use your own customizations alongside Reactito.
+See how the Pockito was tailored to React to get inspiration, source code in [src/reactito](src/reactito/index.js). Note that it's also possible to use your own customizations alongside [Reactito](#tailored-to-react).
