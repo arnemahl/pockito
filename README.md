@@ -8,19 +8,19 @@ It comes with a custom tailoring to React, but you can easily add your own modif
 
 
 
-# Features
+## Features
 
 Learn how to create listeners and creating a Store for your app-state.
 
-## Listeners
+### Listeners
 
 One of the strenghts of Pockito is that it's easy to create listeners, and listen to relevant parts of the app-state.
 
-### Easy-to-write listeners
+#### Easy-to-write listeners
 
 A basic listener looks like this `listener = (nextValue, lastValue, propName) => { ... }`.
 
-### Simple Listeners
+#### Simple Listeners
 
 Adding listeners is easy.
 
@@ -35,24 +35,24 @@ Think of the optional second parameter as a filter. This makes it easy to predic
 listeners may receive, and you don't have to worry about the listener being fired for values it's 
 not interested in.
 
-### Retroactive listeners
+#### Retroactive listeners
 
 Once you listen to a resource, e.g. `Store.addListener(listener, 'showLoadingScreen')`, the listener will be 
 notified right away if the property `showLoadingScreen` is already present in `Store`. You'll never have to 
 write that extra line of code to ensure you get the value if it's already been set.
 
-### Only be notified upon change
+#### Only be notified upon change
 
 Pockito does not notify you if a property get's updated with the same value as it previously had.
 
 
 
 
-## Creating your Store
+### Creating your Store
 
 TODO intro
 
-### Simple Store
+#### Simple Store
 Stores in Pockito can be created as easily as
 
 ```
@@ -61,7 +61,7 @@ import {Listenable} from 'pockito';
 export default new Listenable();
 ```
 
-### Declare and validate Store content
+#### Declare and validate Store content
 
 Looking at the source code of at Store and seeing what fields it contains is very useful.
 
@@ -97,7 +97,7 @@ Once you have added a validator, you can use `Store.isValid('userName', value)`,
 The optional `config` property allows you to dictate how errors are presented.
 
 
-### Create your own validators
+#### Create your own validators
 Validators are just functions: `(value, propName, listenable) => /* true or false*/;`.
 
 E.g. you can do:
@@ -116,7 +116,7 @@ Store = new Listenable({
 * NOTE TO SELF: Find a more creative example. Add validator `Pockito.Validators.oneOf(array)`
 
 
-### Nested Store
+#### Nested Store
 
 When having a complex app-state it's useful to be able to split your store into multiple sub-stores. It can be done like:
 
@@ -152,7 +152,7 @@ Note that the config of Store applies to SubStoreA and SubStoreB as well.
 
 
 
-# Tailored to React
+## Tailored to React
 If you are using Pockito with React, you can create listeners like this:
 
 ```
@@ -192,5 +192,5 @@ Store = new ListenableTailoredToReact();
 
 
 
-# Tailor to your own needs
+## Tailor to your own needs
 See the source code of `Listeners` and `ListenableTailoredToReact` and to see examples of how it can be done.
