@@ -3,12 +3,15 @@ import PockitoListenable from '../listenable/Listenable';
 export const StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value });
 
 export function listenWhileMounted(component, props) {
-    const cwun_original = component.componentWillUnmount;
+    const originalComponentWillUnmount = component.componentWillUnmount;
     const unlisten = this.addListener(StateInjector(component), props);
 
     component.componentWillUnmount = function() {
         unlisten();
-        cwun_original();
+
+        if (typeof originalComponentWillUnmount === 'function') {
+            originalComponentWillUnmount();
+        }
     }.bind(component);
 }
 

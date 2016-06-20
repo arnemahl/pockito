@@ -42,7 +42,7 @@ export default class BaseListenable {
 
     addListener = (newListener, propNames) => {
         if (Array.isArray(propNames)) {
-            propNames.map(propName => this._addListener(newListener, propName));
+            propNames.forEach(propName => this._addListener(newListener, propName));
         } else if (typeof propNames === 'string') {
             this._addListener(newListener, propNames);
         } else if (typeof propNames === 'undefined') {
@@ -50,7 +50,7 @@ export default class BaseListenable {
         } else {
             this._handleError(new Error(`Invalid type of propNames: ${typeof propNames}`), ERRORS.listener.add);
         }
-        return this.removeListener(newListener, propNames);
+        return this.removeListener.bind(this, newListener, propNames);
     }
 
     _removeOmniListener = (oldListener) => {
