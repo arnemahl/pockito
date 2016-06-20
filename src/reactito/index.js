@@ -1,4 +1,4 @@
-import Pockito from './Listenable';
+import PockitoListenable from '../listenable/Listenable';
 
 export const StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value });
 
@@ -12,7 +12,7 @@ export function listenWhileMounted(component, props) {
     }.bind(component);
 }
 
-export class Listenable extends Pockito.Listenable {
+export class Listenable extends PockitoListenable {
 
     constructor(...args) {
         super(...args);

@@ -14,3 +14,5 @@ const ERRORS = {
         noInitialStateForProp: Symbol()
     }
 };
+
+export default ERRORS;

@@ -5,12 +5,12 @@ export default class Listenable extends BaseListenable {
 
     static PL_CLASS_ID = Symbol();
 
-    static config = BaseListenable.with({
+    config = new BaseListenable({
         validator: {
-            onValidationError: (value) => ['log', 'throw'].indexOf(value),
-            onUndocumentedError: (value) => ['none', 'log', 'throw'].indexOf(value),
-            onListenerError: (value) => ['log', 'throw'].indexOf(value),
-            onSameObjectError: (value) => ['none', 'log', 'throw'].indexOf(value)
+            onValidationError: (value) => ['log', 'throw'].indexOf(value) !== -1,
+            onUndocumentedError: (value) => ['none', 'log', 'throw'].indexOf(value) !== -1,
+            onListenerError: (value) => ['log', 'throw'].indexOf(value) !== -1,
+            onSameObjectError: (value) => ['none', 'log', 'throw'].indexOf(value) !== -1
         },
         initialState: {
             onValidationError: 'log',
@@ -24,16 +24,20 @@ export default class Listenable extends BaseListenable {
         super({...args});
 
         if (typeof config === 'object') {
-            super.set({config});
-
-            Object.keys(args).forEach(key => {
-                const value = args[key];
-
-                if (value.constructor && value.constructor.PL_CLASS_ID === this.constructor.PL_CLASS_ID) {
-                    value.set(config);
-                }
-            });
+            this.applyConfig(config);
         }
+    }
+
+    applyConfig = (config) => {
+        this.config.set(config);
+
+        Object.keys(this).forEach(key => {
+            const possibleSubListenable = this[key];
+
+            if (possibleSubListenable.constructor && possibleSubListenable.constructor.PL_CLASS_ID === this.constructor.PL_CLASS_ID) {
+                possibleSubListenable.applyConfig(config);
+            }
+        });
     }
 
     _handleErrorAccordingToConfig(error, config) {
@@ -48,19 +52,26 @@ export default class Listenable extends BaseListenable {
     }
 
     _handleError(error, errorType) {
-        switch (erroType) {
+        if (!this.config) {
+            // Happens if there is an error in super constructor
+            throw error;
+            return;
+        }
+
+        switch (errorType) {
             case ERRORS.set.undocumented:
-                _handleErrorAccordingToConfig(error, this.config.onUndocumentedError);
+                this._handleErrorAccordingToConfig(error, this.config.onUndocumentedError);
                 break;
             case ERRORS.set.invalid:
-                _handleErrorAccordingToConfig(error, this.config.onValidationError);
+                this._handleErrorAccordingToConfig(error, this.config.onValidationError);
                 break;
             case ERRORS.set.sameObject:
-                _handleErrorAccordingToConfig(error, this.config.onSameObjectError);
+                this._handleErrorAccordingToConfig(error, this.config.onSameObjectError);
+                break;
 
             case ERRORS.listener.add:
             case ERRORS.listener.remove:
-                _handleErrorAccordingToConfig(error, this.config.onListenerError);
+                this._handleErrorAccordingToConfig(error, this.config.onListenerError);
                 break;
 
             case ERRORS.set.inputTypeError:

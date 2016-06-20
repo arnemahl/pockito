@@ -1,8 +1,6 @@
 import ERRORS from './ERRORS';
 
-export default class ListenableBase {
-
-    static with = (...args) => new ListenableBase(...args);
+export default class BaseListenable {
 
     listeners = {};
     omniListeners = [];
@@ -16,22 +14,16 @@ export default class ListenableBase {
         this.initialState = initialState;
 
         if (initialState) {
-            this.set(initialState);
+            Object.keys(initialState).forEach(key => {
+                this[key] = initialState[key];
+            });
+            // this.set(initialState);
         }
     }
 
-    _validateProp(propName, value, listenable) {
-        if (typeof this.validator !== 'object') {
-            this._handleError(new Error(`No validator provided to Listenable`), ERROR.set.undocumented);
-            return true;
-        }
-
-        if (typeof this.validator[propName] !== 'function') {
-            this._handleError(new Error(`Missing validator for "${propName}"`), ERROR.set.undocumented);
-            return true;
-        } else {
-            return validator[propName](value, listenable);
-        }
+    // Overridden in Listenable
+    _handleError(error) {
+        throw error;
     }
 
     _addOmniListener(newListener) {
@@ -102,24 +94,31 @@ export default class ListenableBase {
     }
 
     isValid = (propName, value) => {
-        return this._validateProp(propName, value, this);
-    }
+        if (typeof this.validator !== 'object') {
+            this._handleError(new Error(`No validator provided to Listenable`), ERRORS.set.undocumented);
+            return true;
+        }
 
-    _ensureValid(propName, value) {
-        if (!this.isValid(propName, value)) {
-            this._handleError(new Error(`Error during set: Cannot set value ${value} to property ${propName}`), ERRORS.set.invalid);
+        if (typeof this.validator[propName] !== 'function') {
+            this._handleError(new Error(`Missing validator for "${propName}"`), ERRORS.set.undocumented);
+            return true;
+        } else {
+            return this.validator[propName](value, this);
         }
     }
 
     _set(propName, value) {
-        this._ensureValid(propName, value);
+        if (!this.isValid(propName, value)) {
+            this._handleError(new Error(`Attempted setting invalid value ${JSON.stringify(value)} to property "${propName}"`), ERRORS.set.invalid);
+            return;
+        }
 
         const lastValue = this[propName];
 
         if (lastValue === value) {
             if (typeof value === 'object' && value !== null) {
                 this._handleError(
-                    new Error(`Tried to set an object which was already present. propName: "${propName}", value: ${JSON.stringify(object)}`),
+                    new Error(`Tried to set an object which was already present. propName: "${propName}", value: ${JSON.stringify(value)}`),
                     ERRORS.set.sameObject
                 );
             }
