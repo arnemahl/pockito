@@ -28,8 +28,6 @@ export default class BaseListenable {
 
     _addOmniListener(newListener) {
         this.omniListeners.push(newListener);
-
-        return this._removeOmniListener.bind(this, newListener);
     }
 
     _addListener(newListener, propName) {
@@ -40,21 +38,22 @@ export default class BaseListenable {
             const value = this[propName];
             newListener(value, lastValue, propName);
         }
-
-        return this._removeListener.bind(this, newListener, propName);
     }
 
     addListener = (newListener, propNames) => {
         if (Array.isArray(propNames)) {
-            return propNames.map(propName => this._addListener(newListener, propName));
+            propNames.map(propName => this._addListener(newListener, propName));
         } else if (typeof propNames === 'string') {
-            return this._addListener(newListener, propNames);
+            this._addListener(newListener, propNames);
+        } else if (typeof propNames === 'undefined') {
+            this._addOmniListener(newListener);
         } else {
-            return this._addOmniListener(newListener);
+            this._handleError(new Error(`Invalid type of propNames: ${typeof propNames}`), ERRORS.listener.add);
         }
+        return this.removeListener(newListener, propNames);
     }
 
-    _removeOmniListener(oldListener) {
+    _removeOmniListener = (oldListener) => {
         const oldLength = this.omniListeners.length;
 
         this.omniListeners = this.omniListeners.filter(listener => listener !== oldListener);
@@ -88,8 +87,10 @@ export default class BaseListenable {
             propNames.forEach(propName => this._removeListener(oldListener, propName));
         } else if (typeof propNames === 'string') {
             this._removeListener(oldListener, propNames);
-        } else {
+        } else if (typeof propNames === 'undefined') {
             this._removeOmniListener(oldListener);
+        } else {
+            this._handlError(new Error(`Invalid type of propNames: ${typeof propNames}`), ERRORS.listener.remove);
         }
     }
 

@@ -1,3 +1,6 @@
+Consider: Should initialState have to comply with validators or not?
+
+---
 Fix: Undocumented errors get thrown when they should be logged.
 
 ---
