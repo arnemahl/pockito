@@ -22,7 +22,7 @@ export default class ListenableBase {
 
     _validateProp(propName, value, listenable) {
         if (typeof this.validator !== 'object') {
-            this._handleError(new Error(`No validator provided to Listenable`, ERROR.set.undocumented));
+            this._handleError(new Error(`No validator provided to Listenable`), ERROR.set.undocumented);
             return true;
         }
 
@@ -146,13 +146,13 @@ export default class ListenableBase {
 
     _reset(propName) {
         if (!this.initialState[propName]) {
-            this._handleError(new Error(`Cannot reset property, "${propName}" has no initialState.`, ERRORS.reset.noInitialStateForProp)
+            this._handleError(new Error(`Cannot reset property, "${propName}" has no initialState.`), ERRORS.reset.noInitialStateForProp)
         }
     }
 
     reset(propNames) {
         if (!this.initialState) {
-            this._handleError(new Error(`Cannot reset properties, initialState was not provided.`, ERRORS.reset.noInitalState)
+            this._handleError(new Error(`Cannot reset properties, initialState was not provided.`), ERRORS.reset.noInitalState)
         }
 
         if (Array.isArray(propNames)) {

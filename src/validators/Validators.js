@@ -11,5 +11,5 @@ export const nonEmptyString = (value) => string(value) && !!string;
 export const nonNullObject = (value) => object(value) && value !== null;
 
 export const integer = (value) => Number.isInteger(value);
-export const parasbleInteger = (value) => !Number.isNaN((Number.parseInt(value));
-export const parasbleFloat = (value) => !Number.isNaN((Number.parseFloat(value));
+export const parasbleInteger = (value) => !Number.isNaN(Number.parseInt(value));
+export const parasbleFloat = (value) => !Number.isNaN(Number.parseFloat(value));

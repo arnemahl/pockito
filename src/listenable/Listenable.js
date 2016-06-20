@@ -36,10 +36,6 @@ export default class Listenable extends BaseListenable {
         }
     }
 
-    _throwWithStackTrace(message) {
-        throw
-    }
-
     _handleErrorAccordingToConfig(error, config) {
         switch (config) {
             case 'log':
