@@ -90,7 +90,7 @@ export default class BaseListenable {
         } else if (typeof propNames === 'undefined') {
             this._removeOmniListener(oldListener);
         } else {
-            this._handlError(new Error(`Invalid type of propNames: ${typeof propNames}`), ERRORS.listener.remove);
+            this._handleError(new Error(`Invalid type of propNames: ${typeof propNames}`), ERRORS.listener.remove);
         }
     }
 
