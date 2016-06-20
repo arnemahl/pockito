@@ -113,6 +113,8 @@ A *listenerError* happens when Pockito fails to add or remove a listener. If thi
 
 Pockito comes with a set of basic validators that you can [use](#declare-and-validate-store-content). These are:
 
+* any
+* final
 * boolean
 * string
 * number
@@ -123,8 +125,10 @@ Pockito comes with a set of basic validators that you can [use](#declare-and-val
 * nonEmptyString
 * nonNullObject
 * integer
-* parasbleInteger
-* parasbleFloat
+* parsableInteger
+* parsableFloat
+* oneOf
+* oneOfType
 
 Check out the [source code](src/validators/Validators.js) to see how they work.
 
