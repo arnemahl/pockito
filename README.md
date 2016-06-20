@@ -312,10 +312,10 @@ StateInjector = (component) => (value, lastValue, propName) => component.setStat
 
 ##### Reactito.listenWhileMounted
 
-However, to make it even simpler, you can use `listenWhileMounted(reactComponent)`. It adds a StateInjector to the component and automatically unlistens when the component unmounts.
+However, to make it even simpler, you can use `listenWhileMounted(reactComponent)`. It adds a StateInjector to the component and automatically unlistens when the component unmounts. **NOTE:** Use this method in component*Did*Mount.
 
 ```
-componentWillMount() {
+componentDidMount() {
     Store.listenWhileMounted(this, 'showLoadingScreen');
 }
 ```
