@@ -21,12 +21,12 @@ const ERRORS = {
 };
 
 const finalFields = {
-    listeners: final,
-    omniListeners: final,
-    validator: final,
-    initialState: final,
-    config: final,
-    subListenables: final,
+    _listeners: final,
+    _omniListeners: final,
+    _validator: final,
+    _initialState: final,
+    _config: final,
+    _subListenables: final,
     _addOmniListener: final,
     _addListener: final,
     addListener: final,
@@ -54,9 +54,9 @@ class Listenable {
 
     static pockito_listenable_class_identifyer = pockito_listenable_class_identifyer;
 
-    listeners = {};
-    omniListeners = [];
-    subListenables = [];
+    _listeners = {};
+    _omniListeners = [];
+    _subListenables = [];
 
     constructor({config, validator, initialState, ...otherProps}) {
         Object.keys(otherProps).forEach(key => {
@@ -65,15 +65,13 @@ class Listenable {
             this[key] = prop;
 
             if (isPockitoListenable(prop)) {
-                subListenables.push(prop);
+                _subListenables.push(prop);
             }
         });
 
-        ['config'].forEach(key => {
-            if (retrospection[key]) {
-                this[key] = retrospection[key];
-            }
-        });
+        if (retrospection.config) {
+            this._config = retrospection.config;
+        }
 
         if (config) {
             if (retrospection.configAlreadySet) {
@@ -84,13 +82,13 @@ class Listenable {
                 );
             } else {
                 retrospection.configAlreadySet = true;
-                this.config.set(config);
-                this.config.finalize();
+                this._config.set(config);
+                this._config.finalize();
             }
         }
 
-        this.validator = {...validator, ...finalFields};
-        this.initialState = initialState;
+        this._validator = {...validator, ...finalFields};
+        this._initialState = initialState;
 
         if (initialState) {
             this.set(initialState);
@@ -98,19 +96,19 @@ class Listenable {
     }
 
     finalize = () => {
-        Object.keys(this.validator).forEach(key => {
-            this.validator[key] = final;
+        Object.keys(this._validator).forEach(key => {
+            this._validator[key] = final;
         });
 
-        subListenables.forEach(subListenable => subListenable.finalize());
+        _subListenables.forEach(subListenable => subListenable.finalize());
     }
 
     _addOmniListener(newListener) {
-        this.omniListeners.push(newListener);
+        this._omniListeners.push(newListener);
     }
 
     _addListener(newListener, propName) {
-        (this.listeners[propName] = this.listeners[propName] || []).push(newListener);
+        (this._listeners[propName] = this._listeners[propName] || []).push(newListener);
 
         if (typeof this[propName] !== 'undefined') {
             const lastValue = void 0;
@@ -133,11 +131,11 @@ class Listenable {
     }
 
     _removeOmniListener = (oldListener) => {
-        const oldLength = this.omniListeners.length;
+        const oldLength = this._omniListeners.length;
 
-        this.omniListeners = this.omniListeners.filter(listener => listener !== oldListener);
+        this._omniListeners = this._omniListeners.filter(listener => listener !== oldListener);
 
-        const nofRemoved = oldLength - this.omniListeners.length;
+        const nofRemoved = oldLength - this._omniListeners.length;
 
         if (nofRemoved !== 1) {
             this._handleError(new Error(`Tried to remove 1 omniListener, but removed ${nofRemoved}`), ERRORS.listener.remove);
@@ -145,16 +143,16 @@ class Listenable {
     }
 
     _removeListener(oldListener, propName) {
-        if (!this.listeners[propName]) {
+        if (!this._listeners[propName]) {
             this._handleError(new Error(`Could not remove listener, no listeners exists for "${propName}".`), ERRORS.listener.remove);
             return;
         }
 
-        const oldLength = this.listeners[propName].length;
+        const oldLength = this._listeners[propName].length;
 
-        this.listeners[propName] = this.listeners[propName].filter(({listener}) => listener !== oldListener);
+        this._listeners[propName] = this._listeners[propName].filter(({listener}) => listener !== oldListener);
 
-        const nofRemoved = oldLength - this.listeners[propName].length;
+        const nofRemoved = oldLength - this._listeners[propName].length;
 
         if (nofRemoved !== 1) {
             this._handleError(new Error(`Tried to remove 1 listener for "${propName}", but removed ${nofRemoved}.`), ERRORS.listener.remove);
@@ -174,16 +172,16 @@ class Listenable {
     }
 
     isValid = (propName, value) => {
-        if (typeof this.validator !== 'object') {
+        if (typeof this._validator !== 'object') {
             this._handleError(new Error(`No validator provided to Listenable`), ERRORS.set.undocumented);
             return true;
         }
 
-        if (typeof this.validator[propName] !== 'function') {
+        if (typeof this._validator[propName] !== 'function') {
             this._handleError(new Error(`Missing validator for "${propName}"`), ERRORS.set.undocumented);
             return true;
         } else {
-            return this.validator[propName](value, this);
+            return this._validator[propName](value, this);
         }
     }
 
@@ -209,8 +207,8 @@ class Listenable {
 
         const notify = listener => listener(value, lastValue, propName);
 
-        this.listeners[propName] && this.listeners[propName].forEach(notify);
-        this.omniListeners.forEach(notify);
+        this._listeners[propName] && this._listeners[propName].forEach(notify);
+        this._omniListeners.forEach(notify);
     }
 
     set(props) {
@@ -227,7 +225,7 @@ class Listenable {
     }
 
     _reset(propName) {
-        if (!this.initialState[propName]) {
+        if (!this._initialState[propName]) {
             this._handleError(new Error(`Cannot reset property, "${propName}" has no initialState.`), ERRORS.reset.noInitialStateForProp);
         } else {
             this.set({
@@ -237,7 +235,7 @@ class Listenable {
     }
 
     reset(propNames) {
-        if (!this.initialState) {
+        if (!this._initialState) {
             this._handleError(new Error(`Cannot reset properties, initialState was not provided.`), ERRORS.reset.noInitalState)
         }
 
@@ -262,25 +260,25 @@ class Listenable {
     }
 
     _handleError(error, errorType) {
-        if (!this.config) {
+        if (!this._config) {
             error.message = 'Error during config setup: ' + error.message;
             throw error;
         }
 
         switch (errorType) {
             case ERRORS.set.undocumented:
-                this._handleErrorAccordingToConfig(error, this.config.onUndocumentedError);
+                this._handleErrorAccordingToConfig(error, this._config.onUndocumentedError);
                 break;
             case ERRORS.set.invalid:
-                this._handleErrorAccordingToConfig(error, this.config.onValidationError);
+                this._handleErrorAccordingToConfig(error, this._config.onValidationError);
                 break;
             case ERRORS.set.sameObject:
-                this._handleErrorAccordingToConfig(error, this.config.onSameObjectError);
+                this._handleErrorAccordingToConfig(error, this._config.onSameObjectError);
                 break;
 
             case ERRORS.listener.add:
             case ERRORS.listener.remove:
-                this._handleErrorAccordingToConfig(error, this.config.onListenerError);
+                this._handleErrorAccordingToConfig(error, this._config.onListenerError);
                 break;
 
             case ERRORS.set.inputTypeError:
