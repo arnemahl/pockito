@@ -128,7 +128,10 @@ export default class BaseListenable {
 
         this[propName] = value;
 
-        this.listeners[propName] && this.listeners[propName].forEach(listener => listener(value, lastValue, propName));
+        const notify = listener => listener(value, lastValue, propName);
+
+        this.listeners[propName] && this.listeners[propName].forEach(notify);
+        this.omniListeners.forEach(notify);
     }
 
     set(props) {
