@@ -1,3 +1,5 @@
+import {final} from './validators/Validators';
+
 const ERRORS = {
     listener: {
         add: Symbol(),
@@ -18,16 +20,53 @@ const ERRORS = {
     }
 };
 
+const finalFields = {
+    listeners: final,
+    omniListeners: final,
+    validator: final,
+    initialState: final,
+    config: final,
+    subListenables: final,
+    _addOmniListener: final,
+    _addListener: final,
+    addListener: final,
+    _removeOmniListener: final,
+    _removeListener: final,
+    removeListener: final,
+    isValid: final,
+    _set: final,
+    set: final,
+    _reset: final,
+    reset: final,
+    _handleErrorAccordingToConfig: final,
+    _handleError: final,
+    finalize: final
+};
+
 const retrospection = {};
+
+const pockito_listenable_class_identifyer = Symbol();
+const isPockitoListenable = (value) => (
+    value.constructor && value.constructor.pockito_listenable_class_identifyer === pockito_listenable_class_identifyer
+);
 
 class Listenable {
 
+    static pockito_listenable_class_identifyer = pockito_listenable_class_identifyer;
+
     listeners = {};
     omniListeners = [];
+    subListenables = [];
 
     constructor({config, validator, initialState, ...otherProps}) {
         Object.keys(otherProps).forEach(key => {
-            this[key] = otherProps[key];
+            const prop = otherProps[key];
+
+            this[key] = prop;
+
+            if (isPockitoListenable(prop)) {
+                subListenables.push(prop);
+            }
         });
 
         ['config'].forEach(key => {
@@ -37,23 +76,33 @@ class Listenable {
         });
 
         if (config) {
-            this.config.set(config);
-
             if (retrospection.configAlreadySet) {
                 this._handleError(
                     Error("Config was set on multiple listenables. All listenables in a project share the same config,"
                         + " so you should only set config on one of them to get predictable results"),
                     ERRORS.config.multiple
                 );
+            } else {
+                retrospection.configAlreadySet = true;
+                this.config.set(config);
+                this.config.finalize();
             }
         }
 
-        this.validator = validator;
+        this.validator = {...validator, ...finalFields};
         this.initialState = initialState;
 
         if (initialState) {
             this.set(initialState);
         }
+    }
+
+    finalize = () => {
+        Object.keys(this.validator).forEach(key => {
+            this.validator[key] = final;
+        });
+
+        subListenables.forEach(subListenable => subListenable.finalize());
     }
 
     _addOmniListener(newListener) {
