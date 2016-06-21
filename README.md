@@ -129,6 +129,8 @@ Pockito comes with a set of basic validators that you can [use](#declare-and-val
 * parsableFloat
 * oneOf
 * oneOfType
+* undef
+* undefOr
 
 Check out the [source code](src/validators/Validators.js) to see how they work.
 
