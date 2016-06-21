@@ -68,7 +68,7 @@ class StatusList extends React.Component {
 /*****************************/
 import {ListenableTailoredForReact: Listenable} from 'pockito';
 
-const Store = Listenable.with({
+const Store = new Listenable({
     validator: {
         showHelloWorld: (value) => typeof value === 'boolean'
         // ^ This documents that the store contains a property 'showHelloWorld', which must be a boolean
@@ -93,14 +93,14 @@ export default Store;
 // Hence, for nested store, you only need to configure the main store.
 //====================================================================== //
 
-const ThirdLevel = Listenable.with({/*...*/});
-const SecondLevel = Listenable.with({
+const ThirdLevel = new Listenable({/*...*/});
+const SecondLevel = new Listenable({
     /*...*/
     ThirdLevel
 });
-const SomeOtherListenable = Listenable.with({/*...*/});
+const SomeOtherListenable = new Listenable({/*...*/});
 
-const Store = Listenable.with({
+const Store = new Listenable({
     /*...*/
     config: {
         /*...*/
@@ -114,17 +114,17 @@ export default Store;
 
 //====================================================================== //
 
-const Store = Listenable.with({
+const Store = new Listenable({
     /*...*/
     config: {
         /*...*/
     },
 
-    SecondLevel: Listenable.with({
+    SecondLevel: new Listenable({
         /*...*/
-        ThirdLevel: Listenable.with({/*...*/}),
+        ThirdLevel: new Listenable({/*...*/}),
     }),
-    SomeOtherListenable: Listenable.with({/*...*/})
+    SomeOtherListenable: new Listenable({/*...*/})
 });
 
 export default Store;

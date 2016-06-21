@@ -4,7 +4,7 @@ import StoreFirebaseSynchronizer from 'appState/StoreFirebaseSynchronizer';
 
 const {boolean} = Pockito.Validate;
 
-const Store = Pockito.Listenable.with({
+const Store = new Pockito.Listenable({
     validator: {
         showMatchSettings: boolean,
         showDealCardsModal: boolean,
@@ -20,7 +20,7 @@ const Store = Pockito.Listenable.with({
         showTable: true
     },
 
-    DealingConfig: Pockito.Listenable.with({
+    DealingConfig: new Pockito.Listenable({
         validator: {
             dealMode: (value) => ['equally', 'differently'].indexOf(value) !== -1,
             dealModes: () => false, // uneditable

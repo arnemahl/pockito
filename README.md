@@ -160,13 +160,13 @@ Store = new Listenable({
 
 Like in Redux, we recommend having only one Store. As your app-state grows, you can add sub-stores to your Store, to logically organize your app-state.
 
-Creating a sub-store is essentially just creating a new Pockito.Listenable and adding it as a property to the main Store. In the example below Listenables are created through the alternative syntax `Listenable.with(...)`, which works just like `new Listenable(...)`. 
+Creating a sub-store is essentially just creating a new Pockito.Listenable and adding it as a property to the main Store.
 
 ```
 import {Listenable, Validators} from 'pockito';
 
-Store = Listenable.with({
-    SubStoreA: Listenable.with({
+Store = new Listenable({
+    SubStoreA: new Listenable({
         validator: {
             showLoadingScreen: Validators.boolean
         },
@@ -174,7 +174,7 @@ Store = Listenable.with({
             showLoadingScreen: true
         }
     }),
-    SubStoreB: Listenable.with({
+    SubStoreB: new Listenable({
         validator: {
             userName: Validators.string
         },
