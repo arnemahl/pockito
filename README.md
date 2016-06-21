@@ -6,6 +6,8 @@ With Pockito it is easy to listen to, create, validate and document app-state.
 
 It comes with a custom [tailoring to React](#tailored-to-react), but you can easily [create your own customizations](#create-your-own-customizations) to suit your needs.
 
+If you want contribute, please make a pull request. :) Any feedback you have would be greatly appreciated.
+
 
 <!-- Store -->
 
@@ -24,7 +26,7 @@ import {Listenable} from 'pockito';
 const Store = new Listenable();
 ```
 
-Then you are ready to set values to your Store's properties. The `set` function of `Pockito.Listenable`, and hence your store, takes as input an object with properties/values, just like the `setState` function of `React.Component`'s. Here's an example where we set `showLoadingScreen` to `true`.
+Then you are ready to set values to your Store's properties. The `set` function of `Pockito.Listenable`, and hence your store, takes as input an object with properties/values. Here's an example where we set `showLoadingScreen` to `true`.
 
 ```
 Store.set({
@@ -137,22 +139,27 @@ Check out the [source code](src/validators/Validators.js) to see how they work.
 
 
 #### Create your own validators
-Validators are just functions: `(value, propName, listenable) => /* true or false*/;`.
+Validators are just functions: `(value, listenable) => /* true or false*/;`.
 
-This allows you to do things such as:
+This allows you to get pretty creative, and do things such as:
 
 ```
-Store = new Listenable({
+new Listenable({
     validator: {
-        fruit: (value) => ['apple', 'pear', 'banana'].indexOf(value)
+        powerLevel: (value) => value > 9000,
+        remainingEnemyHealth: (value, store) => (
+            value === store.remainingEnemyHealth - store.powerLevel
+            && Math.random() < 0.5
+        )
     },
     initialState: {
-        fruit: 'apple'
+        powerLevel: 9999,
+        remainingEnemyHealth: 1000 * 1000
     }
 });
 ```
 
-* NOTE TO SELF: Find a more creative example. Add validator `Pockito.Validators.oneOf(array)`
+The code above only allows `remainingEnemyHealth` to be reduced, by exactly the value of `powerLevel`. Additionally there's only a 50% chance of success.
 
 
 
@@ -197,13 +204,13 @@ Note that the config of the base store applies to it's sub-stores as well, so yo
 
 ### Listeners
 
-Pockito makes is easy to create listeners and and listen to relevant parts of the app-state. All listeners are [retroactive](#retroactive-listeners) and only get fired upon [effectual changes](#only-fired-upon-actual-changes).
+Pockito makes is easy to create listeners and listen to relevant parts of the app-state. All listeners are [retroactive](#retroactive-listeners) and only get fired upon [effectual changes](#only-fired-upon-actual-changes).
 
 #### How a listener is notified
-By default, a when a listener is notified it receives three parameters, 'value', 'lastValue' and 'propName'.
+By default, a when a listener is notified it receives three parameters, 'value', 'previousValue' and 'propName'.
 
 ```
-listener = (value, lastValue, propName) => { ... }
+listener = (value, previousValue, propName) => { ... }
 ```
 
 However, you can also use listener middelware which modifies how the change is presented to the listener. One such example is [ReactStateInjector](#tailored-to-react) which makes it super easy to syncronize a React Component's state with the Store.
@@ -306,10 +313,10 @@ componentWillUnMount() {
 }
 ```
 
-The StateInjector is a oneLiner, which put's the changes directly into the component's state for you.
+The StateInjector is a one-liner, which put's the changes directly into the component's state for you.
 
 ```
-StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value })
+StateInjector = (component) => (value, previousValue, propName) => component.setState({ [propName]: value })
 ```
 
 ##### Reactito.listenWhileMounted
