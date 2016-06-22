@@ -1,0 +1,18 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.12); fill: #61dafb; stroke: #07174b">
+    <rect width="500" height="500" stroke-width="0"/>
+
+    <line x1="0" y1="085" x2="500" y2="085" stroke-width="7" stroke-dasharray="13, 7" />
+    <line x1="0" y1="100" x2="500" y2="100" stroke-width="7" stroke-dasharray="13, 7" stroke-dashoffset="10" />
+
+    <path d="M 400 085 C 400 350, 350 400, 0 400" stroke-width="7" stroke-dasharray="13, 7" fill="none" />
+    <path d="M 415 085 C 415 357.5, 357.5 415, 0 415" stroke-width="7" stroke-dasharray="13, 7" fill="none"  stroke-dashoffset="10" />
+
+    <line x1="67" y1="200" x2="67" y2="400" stroke-width="7" stroke-dasharray="13, 7" />
+    <line x1="82" y1="200" x2="82" y2="400" stroke-width="7" stroke-dasharray="13, 7" stroke-dashoffset="3" />
+    <line x1="300" y1="200" x2="300" y2="363" stroke-width="7" stroke-dasharray="13, 7" />
+    <line x1="315" y1="200" x2="315" y2="360" stroke-width="7" stroke-dasharray="13, 7" stroke-dashoffset="3" />
+    <line x1="67" y1="200" x2="315" y2="200" stroke-width="7" stroke-dasharray="13, 7" />
+    <line x1="67" y1="215" x2="315" y2="215" stroke-width="7" stroke-dasharray="13, 7" />
+
+    <rect width="500" height="500" fill="none" stroke-width="26" opacity="0.2" />
+</svg>

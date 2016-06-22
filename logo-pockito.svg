@@ -1,5 +1,5 @@
-<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.12); fill: #07174B; stroke: gold">
-    <rect width="500" height="500"/>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.12); fill: aliceblue; stroke: #07174b">
+    <rect width="500" height="500" stroke-width="0"/>
 
     <line x1="0" y1="085" x2="500" y2="085" stroke-width="7" stroke-dasharray="13, 7" />
     <line x1="0" y1="100" x2="500" y2="100" stroke-width="7" stroke-dasharray="13, 7" stroke-dashoffset="10" />
@@ -13,4 +13,6 @@
     <line x1="315" y1="200" x2="315" y2="360" stroke-width="7" stroke-dasharray="13, 7" stroke-dashoffset="3" />
     <line x1="67" y1="200" x2="315" y2="200" stroke-width="7" stroke-dasharray="13, 7" />
     <line x1="67" y1="215" x2="315" y2="215" stroke-width="7" stroke-dasharray="13, 7" />
+
+    <rect width="500" height="500" fill="none" stroke-width="26" opacity="0.2" />
 </svg>
