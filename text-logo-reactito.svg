@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <image x="10" y="10" width="60" height="60" xlink:href="logo-reactito.svg" />
+    <text x="90" y="40" alignment-baseline="central" font-size="40" fill="#61dafb" style="font-family: sans-serif">
+        Reactito.js
+    </text>
+</svg>
