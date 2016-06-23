@@ -11,7 +11,6 @@
 * Split up README
     - Explanation (much of what is in README today)
     - README (intent, strengths/feature outline, inspiration)
-* API Docs (nothing yet)
 * Examples (check that examples are up date and follows best practices)
 
 <!--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-->
@@ -19,6 +18,7 @@
 ### Features
 
 * Safeguard when trying to overwrite a Listenable (sub-store)
+* More config options: none, log, warn, error and throw
 
 <!--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-->
 
