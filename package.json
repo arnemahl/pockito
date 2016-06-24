@@ -6,7 +6,7 @@
   "scripts": {
     "build": "./node_modules/babel-cli/bin/babel.js src -d dist",
     "prepublish": "npm run build",
-    "svgexport": "./node_modules/svgexport/bin/index.js ./logo/text-logo-pockito.svg ./logo/text-logo-pockito.png 2x && ./node_modules/svgexport/bin/index.js ./logo/text-logo-reactito.svg ./logo/text-logo-reactito.png 2x",
+    "svgexport": "./node_modules/svgexport/bin/index.js ./logo/text-logo-pockito.svg ./logo/text-logo-pockito.png 1.33x && ./node_modules/svgexport/bin/index.js ./logo/text-logo-reactito.svg ./logo/text-logo-reactito.png 1.33x",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "babel": {
