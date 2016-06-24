@@ -1,5 +1,5 @@
 export const any = () => true;
-export const final = () => false;
+export const final = (value, listenable) => !listenable._isInitialized;
 export const boolean = (value) => typeof value === 'boolean';
 export const string = (value) => typeof value === 'string';
 export const number = (value) => typeof value === 'number';

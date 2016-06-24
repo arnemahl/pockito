@@ -1,4 +1,4 @@
-import {final} from './validators/Validators';
+import {final} from '../validators/Validators';
 
 const ERRORS = {
     listener: {
@@ -40,6 +40,7 @@ const finalFields = {
     reset: final,
     _handleErrorAccordingToConfig: final,
     _handleError: final,
+    _isInitialized: final,
     finalize: final
 };
 
@@ -65,7 +66,7 @@ class Listenable {
             this[key] = prop;
 
             if (isPockitoListenable(prop)) {
-                _subListenables.push(prop);
+                this._subListenables.push(prop);
             }
         });
 
@@ -93,6 +94,8 @@ class Listenable {
         if (initialState) {
             this.set(initialState);
         }
+
+        this._isInitialized = true;
     }
 
     finalize = () => {
@@ -100,7 +103,7 @@ class Listenable {
             this._validator[key] = final;
         });
 
-        _subListenables.forEach(subListenable => subListenable.finalize());
+        this._subListenables.forEach(subListenable => subListenable.finalize());
     }
 
     _addOmniListener(newListener) {
@@ -302,7 +305,7 @@ retrospection.config = new Listenable({
     initialState: {
         onValidationError: 'log',
         onUndocumentedError: 'none',
-        onListenerError: 'trow',
+        onListenerError: 'throw',
         onSameObjectError: 'log'
     }
 });
