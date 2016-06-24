@@ -5,7 +5,7 @@
         </style>
     </defs>
     <image x="10" y="10" width="60" height="60" xlink:href="logo-pockito.svg" />
-    <text x="90" y="40" alignment-baseline="central" font-size="40" fill="#07174b" stroke="none" style="font-family: 'Righteous', sans-serif;">
+    <text x="93" y="40" alignment-baseline="central" font-size="48" fill="#07174b" stroke="none" style="font-family: 'Righteous', sans-serif;">
         Pockito.js
     </text>
 </svg>
