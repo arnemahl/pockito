@@ -18,13 +18,7 @@
 
 ### Features
 
-* Safeguard when trying to overwrite
-    - A Listenable (sub-store)
-    - A reserved property / method on of Listenable.
-
-* Add option to console.log all store updates.
-
-* Add method of providing one validator for all fields in a store.
+* Safeguard when trying to overwrite a Listenable (sub-store)
 
 <!--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-->
 
