@@ -1,4 +1,5 @@
 import PockitoListenable from '../listenable/Listenable';
+import {final} from '../validators/Validators';
 
 export const StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value });
 
@@ -20,5 +21,6 @@ export class Listenable extends PockitoListenable {
     constructor(...args) {
         super(...args);
         this.listenWhileMounted = listenWhileMounted.bind(this);
+        this._validator.listenWhileMounted = final;
     }
 }
