@@ -1,8 +1,8 @@
-# Pockito.js – A tiny framework for managing app-state
+<img src="logo/text-logo-pockito.png" />
 
-Pockito aims to be a lighweight framework for managing app-state.
+## A tiny framework for managing app-state
 
-With Pockito it is easy to listen to, create, validate and document app-state.
+Pockito aims to be a simple and lighweight framework for managing app-state. Pockito gets you started quickly and helps you document and organize app-state.
 
 It comes with a custom [tailoring to React](#tailored-to-react), but you can easily [create your own customizations](#create-your-own-customizations) to suit your needs.
 

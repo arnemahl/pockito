@@ -6,6 +6,7 @@
   "scripts": {
     "build": "./node_modules/babel-cli/bin/babel.js src -d dist",
     "prepublish": "npm run build",
+    "svgexport": "./node_modules/svgexport/bin/index.js ./logo/text-logo-pockito.svg ./logo/text-logo-pockito.png 1.33x && ./node_modules/svgexport/bin/index.js ./logo/text-logo-reactito.svg ./logo/text-logo-reactito.png 1.33x",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "babel": {
@@ -35,6 +36,7 @@
     "babel-cli": "^6.10.1",
     "babel-plugin-transform-class-properties": "^6.10.2",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
-    "babel-preset-es2015": "^6.9.0"
+    "babel-preset-es2015": "^6.9.0",
+    "svgexport": "^0.3.2"
   }
 }
