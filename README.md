@@ -8,6 +8,7 @@ It comes with a custom [tailoring to React](#tailored-to-react), but you can eas
 
 If you want contribute, please make a pull request. :) Any feedback you have would be greatly appreciated.
 
+Check out the [API documentation](API.md) for a full overview.
 
 <!-- Store -->
 
@@ -94,24 +95,7 @@ Store = new Listenable({
 After setting `onUndocumentedError: 'log'`, Pockito will log to browser console whenever your Store receives a property which doesn't have a validator.
 This allows you to put off documenting the Store if you just feel like hacking away until you have a good setup. Once it's time to add documentation, Pockito will remind you of which properties the store contains, so you don't have to worry about forgetting them.
 
-Below is a table of error types you can configure. Note taht default values are denoted by "☑" and possible values are denoted by "☐".
-
-| config propety \ value | 'none' | 'log' | 'throw' |
-| ---------------------- | :----: | :---: | :-----: |
-| onUndocumentedError    | ☑      | ☐     | ☐       |
-| onValidationError      | N/A    | ☑     | ☐       |
-| onSameObjectError      | ☐      | ☑     | ☐       |
-| onListenerError        | N/A    | ☑     | ☐       |
-| onSetSuccess           | ☑      | ☐     | N/A     |
-
-As mentioned above, an *undocumentedError* happens when the store receives an undocumented property, i.e. a property for which there is no validator.
-
-A *validationError* happens when the store receives an invalid property.
-
-A *sameObjectError* happens when the store receives an object or array which was already present. This does not produce a change or notify listeners, although it is possible the object was manipulated. Check out [this](#note-objects-in-the-store) to avoid this mistake.
-
-A *listenerError* happens when Pockito fails to add or remove a listener. If this happens there is an error in your code, which may prevent your compoents from syncing with the Store state, or cause the Store to notify non-existant listeners.
-
+Check out the [API documentation](API.md#config) for a list of all the config options.
 
 
 #### Default validators

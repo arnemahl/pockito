@@ -99,16 +99,12 @@ class Listenable {
         }
 
         this._isInitialized = true;
-
-        if (validator && uniValidator) {
-            console.warn('Both validator and uniValidator was provided to Listenable.'
-                + ' This is considered bad practice, because no props will any longer be considered undocumented.');
-        }
     }
 
     finalize = () => {
         Object.keys(this._validator).forEach(key => {
             this._validator[key] = final;
+            this._uniValidator = final;
         });
 
         this._subListenables.forEach(subListenable => subListenable.finalize());
@@ -318,6 +314,7 @@ retrospection.config = new Listenable({
         onSameObjectError: (value) => oneOf(['none', 'log', 'throw']),
         onSetSuccess: (value) => oneOf(['none', 'log'])
     },
+    uniValidator: final,
     initialState: {
         onValidationError: 'log',
         onUndocumentedError: 'none',
