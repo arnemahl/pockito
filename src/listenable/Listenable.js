@@ -1,4 +1,4 @@
-import {final} from '../validators/Validators';
+import {final, oneOf} from '../validators/Validators';
 
 const ERRORS = {
     listener: {
@@ -9,7 +9,8 @@ const ERRORS = {
         invalid: Symbol(),
         undocumented: Symbol(),
         sameObject: Symbol(),
-        inputTypeError: Symbol()
+        inputTypeError: Symbol(),
+        success: Symbol()
     },
     reset: {
         noInitalState: Symbol(),
@@ -208,6 +209,10 @@ class Listenable {
 
         this[propName] = value;
 
+        if (this._configFor('onSetSuccess') === 'log') {
+            console.log(`Set: [${propName}]: ${value}.`, this);
+        }
+
         const notify = listener => listener(value, lastValue, propName);
 
         this._listeners[propName] && this._listeners[propName].forEach(notify);
@@ -249,6 +254,10 @@ class Listenable {
         } else {
             this.set(initialState);
         }
+    }
+
+    _configFor(configPropName) {
+        return this._config && this._config[configPropName];
     }
 
     _handleErrorAccordingToConfig(error, config) {
@@ -297,16 +306,18 @@ class Listenable {
 
 retrospection.config = new Listenable({
     validator: {
-        onValidationError: (value) => ['log', 'throw'].indexOf(value) !== -1,
-        onUndocumentedError: (value) => ['none', 'log', 'throw'].indexOf(value) !== -1,
-        onListenerError: (value) => ['log', 'throw'].indexOf(value) !== -1,
-        onSameObjectError: (value) => ['none', 'log', 'throw'].indexOf(value) !== -1
+        onValidationError: (value) => oneOf(['log', 'throw']),
+        onUndocumentedError: (value) => oneOf(['none', 'log', 'throw']),
+        onListenerError: (value) => oneOf(['log', 'throw']),
+        onSameObjectError: (value) => oneOf(['none', 'log', 'throw']),
+        onSetSuccess: (value) => oneOf(['none', 'log'])
     },
     initialState: {
         onValidationError: 'log',
         onUndocumentedError: 'none',
         onListenerError: 'throw',
-        onSameObjectError: 'log'
+        onSameObjectError: 'log',
+        onSetSuccess: 'none'
     }
 });
 

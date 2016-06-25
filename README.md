@@ -100,6 +100,7 @@ Below is a table of error types you can configure. Note taht default values are 
 | onValidationError      | N/A    | ☑     | ☐       |
 | onSameObjectError      | ☐      | ☑     | ☐       |
 | onListenerError        | N/A    | ☑     | ☐       |
+| onSetSuccess           | ☑      | ☐     | N/A     |
 
 As mentioned above, an *undocumentedError* happens when the store receives an undocumented property, i.e. a property for which there is no validator.
 
