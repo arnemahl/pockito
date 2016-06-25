@@ -8,6 +8,8 @@
 
 ### README, docs, etc.
 
+* Remove stuff from README.md which is in API.md
+
 * Split up README
     - Explanation (much of what is in README today)
     - README (intent, strengths/feature outline, inspiration)
