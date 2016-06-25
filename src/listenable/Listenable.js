@@ -161,7 +161,7 @@ class Listenable {
 
         const oldLength = this._listeners[propName].length;
 
-        this._listeners[propName] = this._listeners[propName].filter(({listener}) => listener !== oldListener);
+        this._listeners[propName] = this._listeners[propName].filter(listener => listener !== oldListener);
 
         const nofRemoved = oldLength - this._listeners[propName].length;
 
