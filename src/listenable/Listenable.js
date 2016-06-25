@@ -24,6 +24,7 @@ const ERRORS = {
 const finalFields = {
     _listeners: final,
     _omniListeners: final,
+    _uniValidator: final,
     _validator: final,
     _initialState: final,
     _config: final,
@@ -60,7 +61,7 @@ class Listenable {
     _omniListeners = [];
     _subListenables = [];
 
-    constructor({config, validator, initialState, ...otherProps}) {
+    constructor({config, uniValidator, validator, initialState, ...otherProps}) {
         Object.keys(otherProps).forEach(key => {
             const prop = otherProps[key];
 
@@ -89,6 +90,7 @@ class Listenable {
             }
         }
 
+        this._uniValidator = uniValidator;
         this._validator = {...validator, ...finalFields};
         this._initialState = initialState;
 
@@ -97,6 +99,11 @@ class Listenable {
         }
 
         this._isInitialized = true;
+
+        if (validator && uniValidator) {
+            console.warn('Both validator and uniValidator was provided to Listenable.'
+                + ' This is considered bad practice, because no props will any longer be considered undocumented.');
+        }
     }
 
     finalize = () => {
@@ -176,16 +183,15 @@ class Listenable {
     }
 
     isValid = (propName, value) => {
-        if (typeof this._validator !== 'object') {
-            this._handleError(new Error(`No validator provided to Listenable`), ERRORS.set.undocumented);
-            return true;
-        }
+        if (typeof this._validator[propName] === 'function') {
+            return this._validator[propName](value, this, propName);
 
-        if (typeof this._validator[propName] !== 'function') {
+        } else if (typeof this._uniValidator === 'function') {
+            return this._uniValidator(value, this, propName);
+
+        } else {
             this._handleError(new Error(`Missing validator for "${propName}"`), ERRORS.set.undocumented);
             return true;
-        } else {
-            return this._validator[propName](value, this);
         }
     }
 

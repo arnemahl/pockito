@@ -68,6 +68,8 @@ Having added a validator, you can use `Store.isValid('propName', value)` as a ve
 
 Having added an initialState you can use `Store.reset('propName')` to revert a single property to it's initial state, or `Store.reset()` to reset all properties.
 
+It is also possible to add a `uniValidator` instead of a `validator` with which may validate each prop differently. This comes in handy when you don't know the names of the properties you will be assigning to the store. However, if you do know the property names, it's recommended that you use the regular `validator` to document store content.
+
 <!-- Config -->
 #### Store configuration
 
