@@ -35,6 +35,7 @@ const finalFields = {
     _removeOmniListener: final,
     _removeListener: final,
     removeListener: final,
+    _getValidator: final,
     isValid: final,
     _set: final,
     set: final,
@@ -61,7 +62,9 @@ class Listenable {
     _omniListeners = [];
     _subListenables = [];
 
-    constructor({config, uniValidator, validator, initialState, ...otherProps}) {
+    constructor(args) {
+        const {config, uniValidator, validator, initialState, ...otherProps} = args || {};
+
         Object.keys(otherProps).forEach(key => {
             const prop = otherProps[key];
 
@@ -178,13 +181,23 @@ class Listenable {
         }
     }
 
-    isValid = (propName, value) => {
+    _getValidator(propName, value) {
         if (typeof this._validator[propName] === 'function') {
-            return this._validator[propName](value, this, propName);
+            return this._validator[propName];
 
         } else if (typeof this._uniValidator === 'function') {
-            return this._uniValidator(value, this, propName);
+            return this._uniValidator;
 
+        } else {
+            return void 0;
+        }
+    }
+
+    isValid = (propName, value) => {
+        const validator = this._getValidator(propName, value);
+
+        if (validator) {
+            return validator(value, this, propName);
         } else {
             this._handleError(new Error(`Missing validator for "${propName}"`), ERRORS.set.undocumented);
             return true;
@@ -193,7 +206,9 @@ class Listenable {
 
     _set(propName, value) {
         if (!this.isValid(propName, value)) {
-            this._handleError(new Error(`Attempted setting invalid value ${JSON.stringify(value)} to property "${propName}"`), ERRORS.set.invalid);
+            const validatorString = this._getValidator(propName, value).toString();
+
+            this._handleError(new Error(`Attempted setting invalid value ${JSON.stringify(value)} to property "${propName}". Validator: ${validatorString}`), ERRORS.set.invalid);
             return;
         }
 
@@ -308,11 +323,11 @@ class Listenable {
 
 retrospection.config = new Listenable({
     validator: {
-        onValidationError: (value) => oneOf(['log', 'throw']),
-        onUndocumentedError: (value) => oneOf(['none', 'log', 'throw']),
-        onListenerError: (value) => oneOf(['log', 'throw']),
-        onSameObjectError: (value) => oneOf(['none', 'log', 'throw']),
-        onSetSuccess: (value) => oneOf(['none', 'log'])
+        onValidationError: oneOf(['log', 'throw']),
+        onUndocumentedError: oneOf(['none', 'log', 'throw']),
+        onListenerError: oneOf(['log', 'throw']),
+        onSameObjectError: oneOf(['none', 'log', 'throw']),
+        onSetSuccess: oneOf(['none', 'log'])
     },
     uniValidator: final,
     initialState: {
