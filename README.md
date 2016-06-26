@@ -1,6 +1,6 @@
 <img src="logo/text-logo-pockito.png" />
 
-## A tiny framework for managing app-state
+## A tiny framework for managing app-state [![Build Status](https://img.shields.io/travis/arnemahl/pockito/master.svg?style=flat)](https://travis-ci.org/arnemahl/pockito) [![npm version](https://img.shields.io/npm/v/pockito.svg?style=flat)](https://www.npmjs.com/package/pockito) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
 
 Pockito aims to be a simple and lighweight framework for managing app-state. Pockito gets you started quickly and helps you document and organize app-state.
 
