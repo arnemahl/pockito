@@ -1,7 +1,7 @@
 export const any = () => true;
 export const final = (value, listenable) => !listenable._isInitialized;
 export const boolean = (value) => typeof value === 'boolean';
-export const string = (value) => typeof value === 'string';
+export const string = (value) => typeof value === 'string' && !!value;
 export const number = (value) => typeof value === 'number';
 export const symbol = (value) => typeof value === 'symbol';
 export const func = (value) => typeof value === 'function';
@@ -11,7 +11,7 @@ export const undef = (value) => typeof value === 'undefined';
 
 export const array = (value) => Array.isArray(value);
 
-export const nonEmptyString = (value) => string(value) && !!string;
+export const possiblyEmptyString = (value) => typeof value === 'string';
 export const nullableObject = (value) => typeof value === 'object';
 
 export const integer = (value) => Number.isInteger(value);
