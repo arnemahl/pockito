@@ -7,7 +7,7 @@
     "build": "./node_modules/babel-cli/bin/babel.js src -d dist",
     "prepublish": "npm run build",
     "svgexport": "./node_modules/svgexport/bin/index.js ./logo/text-logo-pockito.svg ./logo/text-logo-pockito.png 1.33x && ./node_modules/svgexport/bin/index.js ./logo/text-logo-reactito.svg ./logo/text-logo-reactito.png 1.33x",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "babel": {
     "presets": [
@@ -34,9 +34,12 @@
   "homepage": "https://github.com/arnemahl/pockito#readme",
   "devDependencies": {
     "babel-cli": "^6.10.1",
+    "babel-jest": "^13.0.0",
     "babel-plugin-transform-class-properties": "^6.10.2",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
+    "jest-cli": "^13.0.0",
     "svgexport": "^0.3.2"
   }
 }
