@@ -100,28 +100,7 @@ Check out the [API documentation](API.md#config) for a list of all the config op
 
 #### Default validators
 
-Pockito comes with a set of basic validators that you can [use](#declare-and-validate-store-content). These are:
-
-* any
-* final
-* boolean
-* string
-* number
-* symbol
-* func
-* object
-* array
-* nonEmptyString
-* nonNullObject
-* integer
-* parsableInteger
-* parsableFloat
-* oneOf
-* oneOfType
-* undef
-* undefOr
-
-Check out the [source code](src/validators/Validators.js) to see how they work.
+Pockito comes with a set of basic validators that you can [use](#declare-and-validate-store-content). See the [API documentation](API.md#validators) for a full overview.
 
 
 
