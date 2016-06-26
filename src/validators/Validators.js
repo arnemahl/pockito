@@ -16,7 +16,7 @@ export const nullableObject = (value) => typeof value === 'object';
 
 export const integer = (value) => Number.isInteger(value);
 export const parsableInteger = (value) => Number.isInteger(Number.parseFloat(value, 10));
-export const parsableFloat = (value) => !Number.isNaN(Number.parseFloat(value, 10));
+export const parsableNumber = (value) => !Number.isNaN(Number.parseFloat(value, 10));
 
 // Takes arguments
 export const undefOr = (validator) => (value, l, p) => undef(value) || validator(value);
