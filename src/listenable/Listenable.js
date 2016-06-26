@@ -21,33 +21,35 @@ const ERRORS = {
     }
 };
 
-const finalFields = {
-    _listeners: final,
-    _omniListeners: final,
-    _uniValidator: final,
-    _validator: final,
-    _initialState: final,
-    _config: final,
-    _subListenables: final,
-    _addOmniListener: final,
-    _addListener: final,
-    addListener: final,
-    _removeOmniListener: final,
-    _removeListener: final,
-    removeListener: final,
-    _getValidator: final,
-    isValid: final,
-    _set: final,
-    set: final,
-    _reset: final,
-    reset: final,
-    _handleErrorAccordingToConfig: final,
-    _handleError: final,
-    _isInitialized: final,
-    finalize: final
+const ownProp = () => false; // Don't allow setting, even in constructor
+
+const ownProps = {
+    _listeners: ownProp,
+    _omniListeners: ownProp,
+    _uniValidator: ownProp,
+    _validator: ownProp,
+    _initialState: ownProp,
+    _config: ownProp,
+    _subListenables: ownProp,
+    _addOmniListener: ownProp,
+    _addListener: ownProp,
+    addListener: ownProp,
+    _removeOmniListener: ownProp,
+    _removeListener: ownProp,
+    removeListener: ownProp,
+    _getValidator: ownProp,
+    isValid: ownProp,
+    _set: ownProp,
+    set: ownProp,
+    _reset: ownProp,
+    reset: ownProp,
+    _handleErrorAccordingToConfig: ownProp,
+    _handleError: ownProp,
+    _isInitialized: ownProp,
+    finalize: ownProp
 };
 
-const isOwnProp = propName => finalFields[propName];
+const isOwnProp = propName => ownProps[propName];
 
 const retrospection = {};
 
@@ -96,7 +98,7 @@ class Listenable {
         }
 
         this._uniValidator = uniValidator;
-        this._validator = {...validator, ...finalFields};
+        this._validator = {...validator, ...ownProps};
         this._initialState = initialState;
 
         if (initialState) {
