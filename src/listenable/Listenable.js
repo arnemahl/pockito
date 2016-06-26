@@ -47,6 +47,8 @@ const finalFields = {
     finalize: final
 };
 
+const isOwnProp = propName => finalFields[propName];
+
 const retrospection = {};
 
 const pockito_listenable_class_identifyer = Symbol();
@@ -115,6 +117,15 @@ class Listenable {
 
     _addOmniListener(newListener) {
         this._omniListeners.push(newListener);
+
+        Object.keys(this).forEach(propName => {
+            const value = this[propName];
+            const lastValue = void 0;
+
+            if (!isOwnProp(propName) && !isPockitoListenable(value)) {
+                newListener(value, lastValue, propName);
+            }
+        });
     }
 
     _addListener(newListener, propName) {
