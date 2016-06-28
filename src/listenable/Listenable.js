@@ -262,17 +262,17 @@ class Listenable {
         });
     }
 
-    _reset(propName) {
+    _reset = (propName) => {
         if (!this._initialState[propName]) {
             this._handleError(new Error(`Cannot reset property, "${propName}" has no initialState.`), ERRORS.reset.noInitialStateForProp);
         } else {
             this.set({
-                [propName]: initialState[propName]
+                [propName]: this._initialState[propName]
             });
         }
     }
 
-    reset(propNames) {
+    reset = (propNames) => {
         if (!this._initialState) {
             this._handleError(new Error(`Cannot reset properties, initialState was not provided.`), ERRORS.reset.noInitalState)
         }
