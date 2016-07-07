@@ -60,7 +60,61 @@ describe('Listenable with initialState', () => {
         expect(res.foo).toEqual('lol');
     });
 
-    it('can be reset', () => {
+    it('can reset all props in initialState', () => {
+        const res = {};
+        function listener(value, l, propName) {
+            res[propName] = value;
+        }
+
+        const Store = new Listenable({
+            validator: {
+                hello: string,
+                foo: string
+            },
+            initialState: {
+                hello: 'world',
+                foo: 'bar'
+            }
+        });
+        Store.set({
+            hello: 'asdf',
+            foo: 'lol'
+        })
+        Store.reset();
+        Store.addListener(listener);
+
+        expect(res.hello).toEqual('world');
+        expect(res.foo).toEqual('bar');
+    });
+
+    it('can reset multiple props', () => {
+        const res = {};
+        function listener(value, l, propName) {
+            res[propName] = value;
+        }
+
+        const Store = new Listenable({
+            validator: {
+                hello: string,
+                foo: string
+            },
+            initialState: {
+                hello: 'world',
+                foo: 'bar'
+            }
+        });
+        Store.set({
+            hello: 'asdf',
+            foo: 'lol'
+        })
+        Store.reset(['hello', 'foo']);
+        Store.addListener(listener);
+
+        expect(res.hello).toEqual('world');
+        expect(res.foo).toEqual('bar');
+    });
+
+    it('can reset single prop', () => {
         const res = {};
         function listener(value, l, propName) {
             res[propName] = value;
