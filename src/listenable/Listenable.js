@@ -282,7 +282,7 @@ class Listenable {
         } else if (typeof propNames === 'string') {
             this._reset(propNames);
         } else {
-            this.set(initialState);
+            this.set(this._initialState);
         }
     }
 
