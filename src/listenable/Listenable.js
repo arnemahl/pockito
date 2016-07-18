@@ -55,7 +55,7 @@ const retrospection = {};
 
 const pockito_listenable_class_identifyer = Symbol();
 const isPockitoListenable = (value) => (
-    value.constructor && value.constructor.pockito_listenable_class_identifyer === pockito_listenable_class_identifyer
+    value && value.constructor && value.constructor.pockito_listenable_class_identifyer === pockito_listenable_class_identifyer
 );
 
 class Listenable {
