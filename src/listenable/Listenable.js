@@ -46,7 +46,8 @@ const ownProps = {
     _handleErrorAccordingToConfig: ownProp,
     _handleError: ownProp,
     _isInitialized: ownProp,
-    finalize: ownProp
+    finalize: ownProp,
+    listenWhileMounted: ownProp // quick fix, comes from Reactito
 };
 
 const isOwnProp = propName => ownProps[propName];
