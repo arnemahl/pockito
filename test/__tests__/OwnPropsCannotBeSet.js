@@ -98,5 +98,8 @@ describe('Listenable will not set to own props:', () => {
     it('protects listenWhileMounted', () => {
         expect(canSet('listenWhileMounted')).toEqual(false);
     });
+    it('protects listenWhileMountedRemap', () => {
+        expect(canSet('listenWhileMountedRemap')).toEqual(false);
+    });
 
 });
