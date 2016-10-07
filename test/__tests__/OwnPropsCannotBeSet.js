@@ -95,5 +95,8 @@ describe('Listenable will not set to own props:', () => {
     it('protects _handleError', () => {
         expect(canSet('_handleError')).toEqual(false);
     });
+    it('protects listenWhileMounted', () => {
+        expect(canSet('listenWhileMounted')).toEqual(false);
+    });
 
 });

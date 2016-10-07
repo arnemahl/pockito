@@ -20,6 +20,5 @@ export class Listenable extends PockitoListenable {
     constructor(...args) {
         super(...args);
         this.listenWhileMounted = listenWhileMounted.bind(this);
-        this._validator.listenWhileMounted = () => false;
     }
 }
