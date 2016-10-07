@@ -47,6 +47,7 @@ const ownProps = {
     _handleError: ownProp,
     _isInitialized: ownProp,
     finalize: ownProp,
+    listenWhileMountedRemap: ownProp, // quick fix, comes from Reactito
     listenWhileMounted: ownProp // quick fix, comes from Reactito
 };
 
