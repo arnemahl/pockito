@@ -18,7 +18,9 @@ import {
     oneOf,
     oneOfType,
     arrayOf,
-    objectOf
+    objectOf,
+    shape,
+    exactShape
 } from '../../src/validators/Validators';
 
 jest.unmock('../../src/validators/Validators');
@@ -128,6 +130,24 @@ describe('Validators', () => {
         expect(objectOfString(['hello', 'world'])).toEqual(true);
         expect(objectOfString(['hello', 'world', 5])).toEqual(false);
         expect(objectOfString(['hello', 'world', 5])).toEqual(false);
+    });
+    it('shape', () => {
+        const person = shape({ name: string, age: number });
+
+        expect(person({ name: 'eric' })).toEqual(false);
+        expect(person({ name: 'eric', age: 5 })).toEqual(true);
+        expect(person({ name: 'eric', age: 'five' })).toEqual(false);
+        expect(person({ name: '', age: 5 })).toEqual(false);
+        expect(person({ name: 'eric', age: 5, lol: 'sure' })).toEqual(true);
+    });
+    it('exactShape', () => {
+        const person = exactShape({ name: string, age: number });
+
+        expect(person({ name: 'eric' })).toEqual(false);
+        expect(person({ name: 'eric', age: 5 })).toEqual(true);
+        expect(person({ name: 'eric', age: 'five' })).toEqual(false);
+        expect(person({ name: '', age: 5 })).toEqual(false);
+        expect(person({ name: 'eric', age: 5, lol: 'nope' })).toEqual(false);
     });
 
     it('works-for-config', () => {
