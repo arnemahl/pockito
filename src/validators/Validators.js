@@ -26,3 +26,6 @@ export const oneOfType = (possibleTypes) => (value) => possibleTypes.some(type =
 
 export const arrayOf = (validator) => (value, l, p) => array(value) && value.every(v => validator(v, l, p));
 export const objectOf = (validator) => (value, l, p) => object(value) && Object.keys(value).map(key => value[key]).every(v => validator(v, l, p));
+
+export const shape = (obj) => (value) => value && Object.keys(obj).every(key => obj[key](value[key]));
+export const exactShape = (obj) => (value) => shape(obj)(value) && Object.keys(value).every(key => Object.keys(obj).indexOf(key) !== -1);

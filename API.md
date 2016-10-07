@@ -29,7 +29,7 @@ Pockito revolves around the [Listenable](#listenable) class, which you can use t
 
 
 ##### initialState
-*Syntax:* `{ [propName: value[, propName2: value2[, ...[, propNameN: valueN]]] }`
+*Syntax:* `{ [propName: value[, propName2: value2[, ...[, propNameN: valueN]]]] }`
 
 The initial state, if provided, must be an object. Each property of the object will be set to the listenable when it's created. If a validator or uniValidator is provided to the Listenable, each property/value must be accepted in order to be set.
 
@@ -168,6 +168,8 @@ Some of the Validators must be called [with arguments](#validator-creators) to p
 | [oneOfType](#oneoftype)  | must be one of the provided types                                     |
 | [arrayOf](#arrayof)      | must be an array, with values accepted by the provided validator      |
 | [objectOf](#objectof)    | must be an object, with values accepted by the provided validator     |
+| [shape](#shape)          | must be an object, with different validators for each property        |
+| [exactShape](#exactshape)| like shape, but does not allow un-validated properties on the object  |
 
 
 #### Validator creators
@@ -204,3 +206,32 @@ Example: `oneOf('apple', 'pear', 1337)`
 *Syntax:* `objectOf(validator)`
 
 *Example:* `objectOf(string)`
+
+
+##### shape
+*Syntax:* `shape({ propName: validator[, propName2: validator2[, ...[, propNameN: validatorN]]] })`
+
+*Example:*
+
+```
+const person = shape({ name: string, age: number }); // string and number from Pockito.Validators
+
+person({ name: 'eric' }); // false, because age is undefined, i.e. not a number
+person({ name: 'eric', age: 5 }); // true
+person({ name: 'eric', age: 'five' }); // false, because age is a string, i.e. not a number
+person({ name: 'eric', age: '5', interests: ['candy'] }); // true
+```
+
+
+##### exactShape
+*Syntax:* `exactShape({ propName: validator[, propName2: validator2[, ...[, propNameN: validatorN]]] })`
+
+*Example:*
+```
+const person = exactShape({ name: string, age: number }); // string and number from Pockito.Validators
+
+person({ name: 'eric' }); // false, because age is undefined, i.e. not a number
+person({ name: 'eric', age: 5 }); // true
+person({ name: 'eric', age: 'five' }); // false, because age is a string, i.e. not a number
+person({ name: 'eric', age: '5', interests: ['candy'] }); // false, because person should noe have property 'interests'
+```
