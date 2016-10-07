@@ -140,4 +140,26 @@ describe('Listenable with initialState', () => {
         expect(res.hello).toEqual('world');
         expect(res.foo).toEqual('bar');
     });
+
+    it('does not complain when retting and conatins unchanged object', () => {
+        const res = {};
+        function listener(value, l, propName) {
+            res[propName] = value;
+        }
+
+        const Store = new Listenable({
+            initialState: {
+                obj: {}
+            }
+        });
+
+        let didThrow = false;
+        try {
+            Store.reset();
+        } catch (e) {
+            didThrow = true;
+        }
+
+        expect(didThrow).toEqual(false);
+    });
 });

@@ -268,9 +268,7 @@ class Listenable {
         if (!this._initialState[propName]) {
             this._handleError(new Error(`Cannot reset property, "${propName}" has no initialState.`), ERRORS.reset.noInitialStateForProp);
         } else {
-            this.set({
-                [propName]: this._initialState[propName]
-            });
+            this._set(propName, this._initialState[propName]);
         }
     }
 
@@ -279,13 +277,22 @@ class Listenable {
             this._handleError(new Error(`Cannot reset properties, initialState was not provided.`), ERRORS.reset.noInitalState)
         }
 
-        if (Array.isArray(propNames)) {
-            propNames.forEach(this._reset);
-        } else if (typeof propNames === 'string') {
-            this._reset(propNames);
-        } else {
-            this.set(this._initialState);
-        }
+        const doReset = () => {
+            if (Array.isArray(propNames)) {
+                propNames.forEach(this._reset);
+            } else if (typeof propNames === 'string') {
+                this._reset(propNames);
+            } else {
+                this.set(this._initialState);
+            }
+        };
+
+        const _handleError = this._handleError;
+        this._handleError = () => {}; // Ignore errors during reset, potential errors are already checked for
+
+        doReset();
+
+        this._handleError = _handleError;
     }
 
     _configFor(configPropName) {
