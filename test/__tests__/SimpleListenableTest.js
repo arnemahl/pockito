@@ -126,4 +126,26 @@ describe('Listenable (with no arguments)', () => {
 
         evaluate(['foo']);
     });
+
+    it('notifies listeners of initialState, even undefined values', () => {
+        setup();
+
+        const Store = new Listenable({
+            initialState: {
+                empty: void 0
+            }
+        });
+
+        let wasNotified = false;
+
+        Store.addListener((value, last, propName) => {
+            wasNotified = true;
+
+            expect(value).toEqual(void 0);
+            expect(last).toEqual(void 0);
+            expect(propName).toEqual('empty');
+        });
+
+        expect(wasNotified).toEqual(true);
+    })
 });

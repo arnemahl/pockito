@@ -229,7 +229,7 @@ class Listenable {
 
         const lastValue = this[propName];
 
-        if (lastValue === value) {
+        if (propName in this && lastValue === value) {
             if (typeof value === 'object' && value !== null) {
                 this._handleError(
                     new Error(`Tried to set an object which was already present. propName: "${propName}", value: ${JSON.stringify(value)}`),
