@@ -66,4 +66,64 @@ describe('Reactito.Listenable:', () => {
         expect(flop).toEqual('bar');
         expect(unmounted).toEqual(true);
     });
+
+    it('removes the need for initial state in React.Components (when using listenWhileMounted)', () => {
+        const Store = new ReactitoListenable();
+
+        const comp = {
+            setState: function(obj) {
+                comp.state = obj
+            }
+        };
+
+        Store.listenWhileMounted(comp);
+
+        expect(typeof comp.state).toEqual('object');
+    });
+    it('but does not overwrite React.Components initial state (when using listenWhileMounted)', () => {
+        const Store = new ReactitoListenable();
+
+        const comp = {
+            state: {
+                foo: 'bar'
+            },
+            setState: function(obj) {
+                comp.state = obj
+            }
+        };
+
+        Store.listenWhileMounted(comp);
+
+        expect(comp.state.foo).toEqual('bar');
+    });
+
+    it('removes the need for initial state in React.Components (when using listenWhileMountedRemap)', () => {
+        const Store = new ReactitoListenable();
+
+        const comp = {
+            setState: function(obj) {
+                comp.state = obj
+            }
+        };
+
+        Store.listenWhileMountedRemap(comp, {empty: 'empty'});
+
+        expect(typeof comp.state).toEqual('object');
+    });
+    it('but does not overwrite React.Components initial state (when using listenWhileMountedRemap)', () => {
+        const Store = new ReactitoListenable();
+
+        const comp = {
+            state: {
+                foo: 'bar'
+            },
+            setState: function(obj) {
+                comp.state = obj
+            }
+        };
+
+        Store.listenWhileMountedRemap(comp, {empty: 'empty'});
+
+        expect(comp.state.foo).toEqual('bar');
+    });
 });

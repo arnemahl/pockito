@@ -3,6 +3,8 @@ import PockitoListenable from '../listenable/Listenable';
 export const StateInjector = (component) => (value, lastValue, propName) => component.setState({ [propName]: value });
 
 export function listenWhileMounted(component, props) {
+    component.state = component.state || {};
+
     const originalComponentWillUnmount = component.componentWillUnmount;
     const unlisten = this.addListener(StateInjector(component), props);
 
@@ -16,6 +18,8 @@ export function listenWhileMounted(component, props) {
 }
 
 export function listenWhileMountedRemap(component, propsObject) {
+    component.state = component.state || {};
+
     const propsToListenTo = Object.keys(propsObject);
     const mapToNewPropName = (storePropName) => propsObject[storePropName];
 
