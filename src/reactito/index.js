@@ -12,7 +12,7 @@ function listenWhileMounted(component, props) {
         unlisten();
 
         if (typeof originalComponentWillUnmount === 'function') {
-            originalComponentWillUnmount();
+            originalComponentWillUnmount.bind(component)();
         }
     }.bind(component);
 }
@@ -32,7 +32,7 @@ function listenWhileMountedRemap(component, propsObject) {
         unlisten();
 
         if (typeof originalComponentWillUnmount === 'function') {
-            originalComponentWillUnmount();
+            originalComponentWillUnmount.bind(component)();
         }
     }.bind(component);
 }
