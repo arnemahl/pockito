@@ -1,5 +1,7 @@
 # Contributing to Pockito
 
+If you want contribute, please make a pull request. :) Any feedback you have would be greatly appreciated.
+
 ## Pull Requests
 
 *Before* submitting a pull request, please make sure the following is done…

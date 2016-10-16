@@ -1,7 +1,7 @@
 {
   "name": "pockito",
   "version": "0.1.15",
-  "description": "A lightweight framework for managing app-state in JavaScript",
+  "description": "A lightweight library for managing app-state in JavaScript",
   "main": "dist/index.js",
   "scripts": {
     "build": "./node_modules/babel-cli/bin/babel.js src -d dist",

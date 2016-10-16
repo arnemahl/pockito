@@ -1,316 +1,181 @@
 <img src="logo/text-logo-pockito.png" />
 
-## A tiny framework for managing app-state [![Build Status](https://img.shields.io/travis/arnemahl/pockito/master.svg?style=flat)](https://travis-ci.org/arnemahl/pockito) [![npm version](https://img.shields.io/npm/v/pockito.svg?style=flat)](https://www.npmjs.com/package/pockito) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
+## A minimalistic approach to shared state [![Build Status](https://img.shields.io/travis/arnemahl/pockito/master.svg?style=flat)](https://travis-ci.org/arnemahl/pockito) [![npm version](https://img.shields.io/npm/v/pockito.svg?style=flat)](https://www.npmjs.com/package/pockito) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
 
-Pockito aims to be a simple and lighweight framework for managing app-state. Pockito gets you started quickly and helps you document and organize app-state.
-
-It comes with a custom [tailoring to React](#tailored-to-react), but you can easily [create your own customizations](#create-your-own-customizations) to suit your needs.
-
-If you want contribute, please make a pull request. :) Any feedback you have would be greatly appreciated.
-
-Check out the [API documentation](API.md) for a full overview.
-
-<!-- Store -->
-
-### Creating your Store
-
-To make it as easy as possible to get started, the minimum setup is designed to be just that: a bare minimum. However, as you app matures Pockito helps you [document](#store-configuration), [validate](#declare-and-validate-store-content) and [organize](#nested-store) your store state to make it more maintainable.
+The problem that Pockito helps you solve is sharing state between different parts of your JavaScrip app. There are other, well established libraries you can use (such as [Redux](https://github.com/reactjs/redux)), but Pockito has another take on it. Without sacrificing too much in flexibility, Pockito provides a simpler way to set up and work with shared state.
 
 
-#### Minimum Store setup
+*Coming right up:*
 
-When creating a Store, all you need to do is do create a new `Pockito.Listenable`.
+* [Installation](#installation)
+* [Minimalistic shared state](#minimalistic-shared-state)
+* [Pockito: Basic use](#pockito-basic-use)
+* [Pockito: Advanced features for when your app matures](#pockito-advanced-features)
 
+*Other resources:*
+
+* [Using Pockito with React](README_REACT.md)
+* [Pockito compared to Redux](Pockito_vs_Redux.md)
+* [API documentation](API.md)
+
+
+
+## Installation
+
+Pockito is available through npm:
+
+```shell
+npm install pockito --save
 ```
+
+
+## Minimalistic shared state
+
+At the bare minimum, facilitating shared state requires just three things:
+
+1. Providing a way to define where the shared state lives
+1. Providing a way to listen for changes to the shared state
+1. Providing a way to update the shared state (and automatically notify listeners)
+
+In the next section you'll see how Pockito does just this.
+
+
+
+## Pockito: Basic use
+
+To create a place for your shared state to live, just import Pockito and create a `new Listenable`. We'll save this app-state container to a constant named `store`.
+
+```javascript
 import {Listenable} from 'pockito';
 
-const Store = new Listenable();
+const store = new Listenable();
 ```
 
-Then you are ready to set values to your Store's properties. The `set` function of `Pockito.Listenable`, and hence your store, takes as input an object with properties/values. Here's an example where we set `showLoadingScreen` to `true`.
+You have now created a `store` to hold your app state. (Note that it contains no initial properties (or values). In simple cases, that's fine: you'll add and update the properties as you go along.)
 
-```
-Store.set({
+On your `store` you can now [add listeners](API.md#listenableaddlistener) and [update the state](API.md#listenableset).
+
+```javascript
+import {Listenable} from 'pockito';
+
+const store = new Listenable();
+
+// Set new property
+store.set({
     showLoadingScreen: true
 });
+
+// Listen for any updates
+const listener = (newValue, oldValue, propName) => console.log('store value updated:', newValue, oldValue, propName);
+
+store.addListener(listener);
+
+// Listen for updates to `showLoadingScreen`
+const listener2 = (showLoadingScreen) => console.log('Show loading screen:', showLoadingScreen);
+
+store.addListener(listener2, 'showLoadingScreen');
 ```
 
-Then you can read the properties directly off the store: `Store.showLoadingScreen`, or you can [add a listener](#listeners) to always stay in sync with the store.
+In the example above, we add a property `showLoadingScreen` with the value `true`. We then add a listener to the store, which logs store state changes to console. We also add another listener, which will only be notified when `showLoadingScreen` is updated. (Being able to create listeners for specific properties can be very useful.)
 
-```
-Store.addListener((value) => {/*...*/}, 'showLoadingScreen');
-```
+Now, you may ask "Will those listeners get fired, even though they are added *after* the store is updated?". In fact, yes, they will, because listeners in Pockito are *retroactive*. This allows you not to worry about the order in which the store is updated and the listeners are added.
+
+One last thing to mention, is that Pockito will not fire listeners if you update a property with the same value as before. For example, setting `showLoadingScreen: true` after the listeners are added will not trigger the listeners again, because they already have been notified that `showLoadingScreen` is `true`, and that has not changed.
 
 
-#### Declare and validate Store content
 
-Looking at the source code of at Store and seeing what properties/values you can expect it to contain is very useful.
 
-To to document the contents, you can add a `validator` and an `initialState` when creating the store. (Note: You can add an initialState without a validator, but not a validator without an initialState. We suggest you add both.) See [Default validators](#default-validators) for a list of basic validators that come with Pockito.
 
-```
-import {Listenable, Validators} from 'pockito';
+## Pockito: Advanced features
 
-Store = new Listenable({
-    validator: {
-        showLoadingScreen: Validators.boolean
-    },
+*First of all, these features aren't really all that advanced, they're just put in a section of their own to make it easier to learn Pockito one step at a time.*
+
+When your app starts to mature you may run into a few problems if you're using just the basic setup (as described in the previous section). The shared state may grow large making it hard to remember what properties exist and what they are named. It can also become quite cluttered if all the shared values, related or not, are at the root level of your `store`. Lastly, you may wan't better control of what happens when something "goes wrong". The folliwing features let you fix these problems in an easy way.
+
+* [Defining an initial state](#defining-an-initial-state)
+* [Defining legal values, or types of values, for each property in the store](#defining-legal-values)
+* [Splitting up your store into multiple sub-stores](#sub-stores-bundling-related-properties)
+* [Configuring error-handling in Pockito](#configuring-pockito)
+
+
+##### Defining an initial state
+
+To define an initial state, just supply the `initialState` with the properties/values you want when creating a `new Listenable`. Note that the input parameter to `new Listenable` should be either nothing or an object, and as such `initialState` is one of the properties you *may* define on that object.
+
+```javascript
+import {Listenable} from 'pockito';
+
+store = new Listenable({
     initialState: {
         showLoadingScreen: true
     }
 });
 ```
 
-Adding a validator documents _that_ a property may exist, and _what_ value it may contain.
 
-If the Store receives an invalid value for a property, it will simply not be set. Instead, it will result in an exception or a log statement, depending on the Store's [configuration](#store-configuration).
+##### Defining legal values
 
-Having added a validator, you can use `Store.isValid('propName', value)` as a verifier for a potential property-value.
+Defining legal values or types of values is done in a similar fasion as defining an initial state. Provide a property `validator` when creating your store, with validators functions for the fields you want to validate.
 
-Having added an initialState you can use `Store.reset('propName')` to revert a single property to it's initial state, or `Store.reset()` to reset all properties.
-
-It is also possible to add a `uniValidator` instead of a `validator` with which may validate each prop differently. This comes in handy when you don't know the names of the properties you will be assigning to the store. However, if you do know the property names, it's recommended that you use the regular `validator` to document store content.
-
-<!-- Config -->
-#### Store configuration
-
-Adding a `config` property allows you to dictate how errors are presented.
-
-```
+```javascript
 import {Listenable, Validators} from 'pockito';
 
-Store = new Listenable({
+const {boolean} = Validators; // Destructure the `boolean` validator from Pockito's Validators
+const divisibleBy1337 = (value) => value % 1337 === 0; // Or create your own validator
+
+store = new Listenable({
     validator: {
-        showLoadingScreen: Validators.boolean
-    },
+        showLoadingScreen: boolean,
+        leetK: divisibleBy1337
+    }
+});
+```
+
+When you update a property *that has a validator*, Pockito calls that validator to see if the new value is accepted. If the value is accepted, Pockito sets the value and notifies the listeners. If the value is *not* accepted, Pockito will give you an error (see how in the [config section](#configuring-pockito)).
+
+You can use the [predefined Validators](API.md#validators) that come with Pockito, or create your own. A [validator](API.md#validator) function receives three arguments when called: `(value, listenable, propName)`. In most cases (and in the example above) we only need to use the first one.
+
+
+##### Sub-stores: Bundling related properties
+
+To make things easy ot manage it's nice to have just one `store`. However, bundling related properties together can make your `store` more manageable. An example of how to do that with Pockito is shown below. In this example we define three properties, `store.showLoadingScreen`, `store.currentUser.id` and `store.currentUser.userName`, two of which are bundled into the sub-store `currentUser`.
+
+```javascript
+const store = new Listenable({
+
     initialState: {
         showLoadingScreen: true
     },
-    config: {
-        onUndocumentedError: 'log' // default is 'none'
-    }
-});
-```
-
-After setting `onUndocumentedError: 'log'`, Pockito will log to browser console whenever your Store receives a property which doesn't have a validator.
-This allows you to put off documenting the Store if you just feel like hacking away until you have a good setup. Once it's time to add documentation, Pockito will remind you of which properties the store contains, so you don't have to worry about forgetting them.
-
-Check out the [API documentation](API.md#config) for a list of all the config options.
-
-
-#### Default validators
-
-Pockito comes with a set of basic validators that you can [use](#declare-and-validate-store-content). See the [API documentation](API.md#validators) for a full overview.
-
-
-
-#### Create your own validators
-Validators are just functions: `(value, listenable) => /* true or false*/;`.
-
-This allows you to get pretty creative, and do things such as:
-
-```
-new Listenable({
     validator: {
-        powerLevel: (value) => value > 9000,
-        remainingEnemyHealth: (value, store) => (
-            value === store.remainingEnemyHealth - store.powerLevel
-            && Math.random() < 0.5
-        )
+        showLoadingScreen: boolean
     },
-    initialState: {
-        powerLevel: 9999,
-        remainingEnemyHealth: 1000 * 1000
-    }
+
+    currentUser: new Listenable({
+        initialState: {
+            id: '',
+            userName: ''
+        },
+        validators: {
+            id: possiblyEmptyString,
+            userName: possiblyEmptyString
+        }
+    })
 });
 ```
 
-The code above only allows `remainingEnemyHealth` to be reduced, by exactly the value of `powerLevel`. Additionally there's only a 50% chance of success.
+
+##### Configuring Pockito
+Because the goal of Pockito is to get you started quickly, some of it's logging/error handling features are turned off by default. Here's an example of how to make Pockito log to console whenever the store receives a property with no validator (to help you remember to document all store properties).
 
 
+```javascript
+import {Listenable} from 'pockito';
 
-#### Nested Store
-
-Like in Redux, we recommend having only one Store. As your app-state grows, you can add sub-stores to your Store, to logically organize your app-state.
-
-Creating a sub-store is essentially just creating a new Pockito.Listenable and adding it as a property to the main Store.
-
-```
-import {Listenable, Validators} from 'pockito';
-
-Store = new Listenable({
-    SubStoreA: new Listenable({
-        validator: {
-            showLoadingScreen: Validators.boolean
-        },
-        initialState: {
-            showLoadingScreen: true
-        }
-    }),
-    SubStoreB: new Listenable({
-        validator: {
-            userName: Validators.string
-        },
-        initialState: {
-            userName: true
-        }
-    }),
+store = new Listenable({
     config: {
-        onValidationError: 'throw' // default is 'log'
-        onUndocumentedError: 'log' // default is 'none'
+        onUndocumentedError: 'log'
     }
 });
 ```
 
-Note that the config of the base store applies to it's sub-stores as well, so you only need to configure your store once.
-
-
-
-<!-- Listeners -->
-
-### Listeners
-
-Pockito makes is easy to create listeners and listen to relevant parts of the app-state. All listeners are [retroactive](#retroactive-listeners) and only get fired upon [effectual changes](#only-fired-upon-actual-changes).
-
-#### How a listener is notified
-By default, a when a listener is notified it receives three parameters, 'value', 'previousValue' and 'propName'.
-
-```
-listener = (value, previousValue, propName) => { ... }
-```
-
-However, you can also use listener middelware which modifies how the change is presented to the listener. One such example is [ReactStateInjector](#tailored-to-react) which makes it super easy to syncronize a React Component's state with the Store.
-
-#### Adding listeners to the Store
-
-When you add listeners you can choose exactly what kinds of changes the listener is interested in.
-
-* `Store.addListener(listener)` ― adds a listener to `Store` which is notified of changes to _any_ value on `Store`.
-* `Store.addListener(listener, 'propName')` ― for listening to a single property named 'propName'.
-* `Store.addListener(listener, ['propName', 'anotherPropName'])` ― for listening to multiple props.
-
-Being able to specify which properties a listener is notified of has some benefits.
-
-Firstly, listeners will only be fired due to relevant changes. Hence there is no need to check whether or not a change is of relevance to the listener (less code, yay!), and listeners will never be fired only to do nothing because the change is irrelevant.
-
-Secondly it allows you to write custom listeners for each property. There is often times a different respnonse to the update depending on which property was updated, and it typically produces more readable code if each listener only handles one case (rather than catch-all listeners with long switch statements).
-
-#### Removing listeners
-
-There are two ways to remove listeners. One way is to use `removeListener` with the same parameters as you used when adding the listener. Note that you must have the reference to the same _listener_, hence this does not work for inline functions.
-
-```
-Store.addListener(listener, 'propName');
-...
-Store.removeListener(listener, 'propName');
-```
-
-Alternatively you can use the method returned from `addListener` to remove the listener. This also works with inline functions.
-
-```
-const removeListener = Store.addListener(listener, 'propName');
-...
-removeListener();
-```
-
-
-#### Retroactive listeners
-
-Once you listen to a resource, e.g. `Store.addListener(listener, 'showLoadingScreen')`, the listener will be 
-notified right away if the property `showLoadingScreen` is already present in `Store`. You'll never have to 
-write that extra line of code to ensure you get the value if it's already been set.
-
-#### Only fired upon effectual changes
-
-Pockito does not notify listeners unless the new value is different from the old one. This allows you to pipe all changes directly into the view without worrying about wasting resources on non-effectual updates.
-
-##### Note: Objects in the store
-Because the Listenable only acceptes effectual changes you cannot modify objects that already exists in the Store. You need to either create a new object with both new and unchanged properties, or perhaps rather create a sub-store for that object.
-
-Creating a new object:
-
-```
-Store = new Listenable({
-    initialState: {
-        participants: {}
-    }
-});
-
-Store.set({
-    participants: {
-        ...Store.participants,
-        [participantId]: participantName
-    }
-});
-
-Store.addListener(fn, 'participants');
-```
-
-Using a sub-store
-
-```
-Store = new Listenable({
-    participants: new Listenable() // Participans are a substore complete with addListener(...) and set(...)
-});
-
-Store.participants.set({
-    [participantId]: participantName
-});
-
-Store.participants.addListener(fn);
-```
-
-
-<!-- Reactito -->
-
-## Tailored to React
-To tailor Pockito to React, we have created three things, (1) a listener middleware, (2) a listener method `listenWhileMounted` for React.Component instances, and (3) a customized Listenable on which the `listenWhileMouted` method is available.
-
-##### Reactito.StateInjector
-
-If you are using Pockito with React, you can create a customized listener using the method `Pockito.Reactito.StateInjector(reactComponentInstance)`.
-
-```
-componentWillMount() {
-    this.unListen = Store.addListener(StateInjector(this), 'showLoadingScreen');
-}
-componentWillUnMount() {
-    this.unListen();
-}
-```
-
-The StateInjector is a one-liner, which put's the changes directly into the component's state for you.
-
-```
-StateInjector = (component) => (value, previousValue, propName) => component.setState({ [propName]: value })
-```
-
-##### Reactito.listenWhileMounted
-
-However, to make it even simpler, you can use `listenWhileMounted(reactComponent)`. It adds a StateInjector to the component and automatically unlistens when the component unmounts. **NOTE:** Use this method in component*Did*Mount.
-
-```
-componentDidMount() {
-    Store.listenWhileMounted(this, 'showLoadingScreen');
-}
-```
-
-The easiest way to make this method available on your Store is to make it a [Reactito.Listenable](#reactito-listenable).
-
-##### Reactito.Listenable
-
-The method `listenWhileMounted` exists on `Pockito.Reactito.Listenable`, which is a customization of the regular `Pockito.Listenable`.
-
-```
-import {Reactito} from 'pockito';
-
-Store = new Reactito.Listenable();
-```
-
-
-
-<!-- Customize -->
-
-## Create your own Customizations
-
-See how the Pockito was tailored to React to get inspiration, source code in [src/reactito](src/reactito/index.js). Note that it's also possible to use your own customizations alongside [Reactito](#tailored-to-react).
+For a full overview of the available config parameters, see the [config section](API.md#config) of the API documentation.
