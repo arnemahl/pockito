@@ -1,6 +1,6 @@
 <img src="logo/text-logo-pockito.png" />
 
-## A minimalistic approach to shared state [![Build Status](https://img.shields.io/travis/arnemahl/pockito/master.svg?style=flat)](https://travis-ci.org/arnemahl/pockito) [![npm version](https://img.shields.io/npm/v/pockito.svg?style=flat)](https://www.npmjs.com/package/pockito) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
+## A minimalistic approach to shared state [![Build Status](https://semaphoreci.com/api/v1/arnemahl/pockito/branches/master/shields_badge.svg)](https://semaphoreci.com/arnemahl/pockito) [![npm version](https://img.shields.io/npm/v/pockito.svg?style=flat)](https://www.npmjs.com/package/pockito) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
 
 The problem that Pockito helps you solve is sharing state between different parts of your JavaScrip app. There are other, well established libraries you can use (such as [Redux](https://github.com/reactjs/redux)), but Pockito has another take on it. Without sacrificing too much in flexibility, Pockito provides a simpler way to set up and work with shared state.
 
