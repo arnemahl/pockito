@@ -221,9 +221,9 @@ class Listenable {
 
     _set(propName, value) {
         if (!this.isValid(propName, value)) {
-            const validatorString = this._getValidator(propName, value).toString();
+            const validator = this._getValidator(propName, value);
 
-            this._handleError(new Error(`Attempted setting invalid value ${JSON.stringify(value)} to property "${propName}". Validator: ${validatorString}`), ERRORS.set.invalid);
+            this._handleError(new Error(`Pockito received an invalid value for property "${propName}". ${validator.getMessage(value, this)}`), ERRORS.set.invalid);
             return;
         }
 
