@@ -152,7 +152,7 @@ Some of the Validators must be called [with arguments](#validator-creators) to p
 | final                    | property cannot be updated after the Listenable is created            |
 | boolean                  | must be of type 'boolean'                                             |
 | string                   | must be of type 'string' and contain at least one character           |
-| number                   | must be of type 'number'                                              |
+| number                   | must be of type 'number' and cannot be NaN or Infinity                |
 | symbol                   | must be of type 'symbol'                                              |
 | func                     | must be of type 'function'                                            |
 | object                   | must be of type 'object', not null                                    |
@@ -162,8 +162,8 @@ Some of the Validators must be called [with arguments](#validator-creators) to p
 | possiblyEmptyString      | must be of type 'string'                                              |
 | nullableObject           | must be of type 'object'                                              |
 | integer                  | must be an integer                                                    |
-| parsableInteger          | must be parsable, resulting in an integer (not float or NaN)          |
-| parsableNumber           | must be parsable, resulting in a number (not NaN)                     |
+| parsableInteger          | must be parsable, resulting in an integer                             |
+| parsableNumber           | must be parsable, resulting in a number (not NaN or Infinity)         |
 | [oneOf](#oneof)          | must be one of the provided values                                    |
 | [oneOfType](#oneoftype)  | must be one of the provided types                                     |
 | [arrayOf](#arrayof)      | must be an array, with values accepted by the provided validator      |
