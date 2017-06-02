@@ -17,16 +17,45 @@ function listenWhileMounted(component, props) {
     }.bind(component);
 }
 
-function listenWhileMountedRemap(component, propsObject) {
+/*
+ * Usage: store.subscribeWhileMountedMapFrom(this, { storeStatePropName: componentStatePropName });
+ */
+function listenWhileMountedMapFrom(component, propsObject) {
     component.state = component.state || {};
 
-    const propsToListenTo = Object.keys(propsObject);
-    const mapToNewPropName = (storePropName) => propsObject[storePropName];
+    const storePropNames = Object.keys(propsObject);
+    const mapToComponentPropName = (storePropName) => propsObject[storePropName];
 
-    const RemappingStateInjector = (component) => (value, lastValue, propName) => component.setState({ [mapToNewPropName(propName)]: value });
+    const RemappingStateInjector = (component) => (value, lastValue, storePropName) => component.setState({ [mapToComponentPropName(storePropName)]: value });
 
     const originalComponentWillUnmount = component.componentWillUnmount;
-    const unlisten = this.addListener(RemappingStateInjector(component), propsToListenTo);
+    const unlisten = this.addListener(RemappingStateInjector(component), storePropNames);
+
+    component.componentWillUnmount = function() {
+        unlisten();
+
+        if (typeof originalComponentWillUnmount === 'function') {
+            originalComponentWillUnmount.bind(component)();
+        }
+    }.bind(component);
+}
+
+/*
+ * Like listenWhileMountedMapFrom, but key/value in propsObject (2nd argument) are reversed
+ *
+ * Usage: store.subscribeWhileMountedMapFrom(this, { componentStatePropName: storeStatePropName });
+ */
+function listenWhileMountedMapTo(component, propsObject) {
+    component.state = component.state || {};
+
+    const componentPropNames = Object.keys(propsObject);
+    const storePropNames = Object.values(propsObject);
+    const mapToComponentPropName = (storePropName) => componentPropNames[storePropNames.indexOf(storePropName)];
+
+    const RemappingStateInjector = (component) => (value, lastValue, storePropName) => component.setState({ [mapToComponentPropName(storePropName)]: value });
+
+    const originalComponentWillUnmount = component.componentWillUnmount;
+    const unlisten = this.addListener(RemappingStateInjector(component), storePropNames);
 
     component.componentWillUnmount = function() {
         unlisten();
@@ -49,6 +78,8 @@ class Listenable extends PockitoListenable {
 module.exports = {
     StateInjector,
     listenWhileMounted,
-    listenWhileMountedRemap,
+    listenWhileMountedRemap: listenWhileMountedMapFrom,
+    listenWhileMountedMapFrom,
+    listenWhileMountedMapTo,
     Listenable
 };
