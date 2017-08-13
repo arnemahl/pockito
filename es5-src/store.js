@@ -12,12 +12,26 @@ unsettable.getError = function(key) {
 function flatMap(...)
 function unique(...)
 
-
 function Store(args) {
-    var initialState = args.state;
+    var initialState = args.state || {};
     var validators = args.validators || [];
     var defaultValidator = args.defaultValidator || anyValue;
+    var storeName = args.name;
 
+    if (typeof initialState !== 'object') {
+        throw Error('The initialState must be an object, unless omitted');
+    }
+    if (!Array.isArray(validators) || validators.some(fn => typeof fn !== 'function')) {
+        throw Error('The validators must be an array of functions, unless omitted');
+    }
+    if (typeof defaultValidator !== 'function') {
+        throw Error('The defaultValidator must be a function, unless omitted');
+    }
+    if (typeof storeName !== 'string' || storeName.length === 0) {
+        throw Error('The name of a store must be a non-empty string')
+    }
+
+    // Do not allow overwriting the store methods
     validators.set = unsettable;
     validators.addListener = unsettable;
     validators.removeListener = unsettable;
@@ -28,11 +42,13 @@ function Store(args) {
         ? this
         : {};
 
+    store.name = storeName;
+
     var listenerMap = {};
     var omnilisteners = [];
 
     function getValidator(key) {
-        return validators && validators[key] || defaultValidator;
+        return validators[key] || defaultValidator;
     }
 
     function getListener(key) {
@@ -51,7 +67,7 @@ function Store(args) {
             if (!accepts(value)) {
                 var error = accepts.getError
                     ? accepts.getError(key, value)
-                    : TypeError(`Value of ${key} in partialState was not accepted as ${accepts.name}`);
+                    : TypeError(`Value of ${key} in partialState was not accepted as ${accepts.name} in store ${storeName}`);
 
                 throw error;
             }
