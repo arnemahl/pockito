@@ -5,7 +5,7 @@ function anyValue() {
 function unsettable() {
     return false;
 }
-unsettable.getError = function(key) {
+unsettable.getError = function(value, key) {
     throw Error(`Cannot set a new value to store.${key}.`)
 }
 
@@ -66,7 +66,7 @@ function Store(args) {
 
             if (!accepts(value)) {
                 var error = accepts.getError
-                    ? accepts.getError(key, value)
+                    ? accepts.getError(value, key, store)
                     : TypeError(`Value of ${key} in partialState was not accepted as ${accepts.name} in store ${storeName}`);
 
                 throw error;
