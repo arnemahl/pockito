@@ -46,25 +46,17 @@ function parsableNumber(value) {
 }
 
 // Takes arguments
-function undefOr = (validator) => {
+function undefOr = (validator) {
     function fn = (value, key, store) {
         return undef(value) || validator(value);
     }
 
-    // fn.getError = function (value, key, store) {
-    //     if (!undef(value)) {
-    //         return TypeError(`Value of ${key} in partialState was not accepted as ${accepts.name} in store ${storeName}`);
-    //     } else {
-    //         return validator.getError
-    //             ? validator.getError(value, key, store)
-    //             : TypeError(`Value of ${key} in partialState was not accepted as ${validator.name} in store ${storeName}`);
-    //     }
-    // }
+    setName(fn, `undefOr(${validator.name || 'unnamed'})`);
 
     return fn;
 }
 
-function oneOf(possibleValues) => {
+function oneOf(possibleValues) {
     function fn(value) {
         return possibleValues.indexOf(value) !== -1;
     }
@@ -80,7 +72,7 @@ function oneOfType(possibleTypes) {
         });
     }
 
-    setName(fn, `oneOfType([${possibleTypes.map(function (type) { return type.name }).join(', ')}])`)
+    setName(fn, `oneOfType([${possibleTypes.map(function (type) { return type.name || 'unnamed' }).join(', ')}])`)
 }
 
 function arrayOf(validator) {
@@ -90,18 +82,18 @@ function arrayOf(validator) {
         });
     }
 
-    setName(fn, `arrayOf([${validator.name}])`);
+    setName(fn, `arrayOf([${validator.name || 'unnamed'}])`);
 
     return fn;
 }
 function objectOf(validator) {
     function fn(obj, key, store) {
-        return object(obj) && Object.keys(obj).map(key => obj[key]).every(function (value) {
+        return object(obj) && Object.keys(obj).map(function (k) { return obj[k] }).every(function (value) {
             return validator(value, key, store);
         });
     }
 
-    setName(fn, `objectOf([${validator.name}])`);
+    setName(fn, `objectOf([${validator.name || 'unnamed'}])`);
 
     return fn;
 }
