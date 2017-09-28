@@ -6,14 +6,14 @@ function unsettable() {
     return false;
 }
 unsettable.getError = function(value, key) {
-    throw Error(`Cannot set a new value to store.${key}.`)
+    throw Error(`store.${key} is a protected property and cannot be changed through store.set`)
 }
 
 function flatMap(...)
 function unique(...)
 
 function Store(args) {
-    var initialState = args.state || {};
+    var initialState = args.initialState || {};
     var validators = args.validators || [];
     var defaultValidator = args.defaultValidator || anyValue;
     var storeName = args.name;

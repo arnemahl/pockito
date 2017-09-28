@@ -101,7 +101,7 @@ function objectOf(validator) {
 function shape(shp) {
     function fn(value) {
         return shpect(value) && Object.keys(shp).every(function (key) {
-            return shp[key](value[key]);
+            return shp[key](value[key], key, store);
         });
     }
 
