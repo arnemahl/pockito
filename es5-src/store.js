@@ -87,6 +87,70 @@ function Store(args) {
             });
     }
 
+    // new stuff: on/off
+    function getKeys(args) {
+        if (Array.isArray(args[0])) {
+            if (args.length > 2) {
+                throw 'Array and then more props.. not ok';
+            }
+            return args[0];
+        } else {
+            return args.slice(0, args.length - 2);
+        }
+    }
+
+    function containsInvalidKey(keys) {
+        return keys.some(function (key) {
+            return typeof key !== 'string' && typeof key !== 'number';
+        });
+    }
+
+    store.on = function () {
+        var args = Array.prototype.slice.call(arguments);
+        var len = args.length;
+
+        var listener = args[len-1];
+
+        if (typeof listener !== 'function') {
+            throw Error('The last argument must be a listener function');
+        }
+
+        if (len === 1) {
+            return store.onChange(listener);
+        } else {
+            var keys = getKeys(args);
+
+            if (containsInvalidKey(keys)) {
+                throw 'Property names must be strings or numbers';
+            }
+
+            return store.addListener(keys, listener);
+        }
+    }
+
+    store.off = function () {
+        var args = Array.prototype.slice.call(arguments);
+        var len = args.length;
+
+        var listener = args[len-1];
+
+        if (typeof listener !== 'function') {
+            throw Error('The last argument must be a listener function');
+        }
+
+        if (len === 1) {
+            store.offChange(listener);
+        } else {
+            var keys = getKeys(args);
+
+            if (containsInvalidKey(keys)) {
+                throw 'Property names must be strings or numbers';
+            }
+
+            store.removeListener(keys, listener);
+        }
+    }
+
     store.addListener = function(keys, listener) {
         keys.forEach(key => {
             if (listenerMap[key] === void 0) {
